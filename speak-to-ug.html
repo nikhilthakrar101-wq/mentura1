@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Speak to an Undergraduate Student • Mentura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg-dark: #111827;
+      --card-dark: #1f2933;
+      --accent: #ffffff;
+      --accent-muted: #9ca3af;
+    }
+
+    body {
+      background: var(--bg-dark);
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--accent);
+    }
+
+    /* NAV */
+    header {
+      padding: 18px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      text-transform: uppercase;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .logo a {
+      text-decoration: none;
+      color: var(--accent);
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 18px;
+    }
+
+    nav a {
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--accent-muted);
+      font-size: 14px;
+      white-space: nowrap;
+      cursor: pointer;
+      position: relative;
+      z-index: 10;
+    }
+    nav a:hover { color: var(--accent); }
+
+    /* MAIN */
+    main {
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 0 22px;
+      text-align: center;
+    }
+
+    /* TYPING */
+    .typing, .typing-small {
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid var(--accent);
+      width: fit-content;
+      margin: 0 auto;
+      animation: blink 0.8s infinite;
+    }
+
+    .typing {
+      font-size: 34px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .typing-small {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 40px auto 25px;
+    }
+
+    @keyframes blink {
+      0% { border-right-color: rgba(255,255,255,1); }
+      50% { border-right-color: rgba(255,255,255,0); }
+      100% { border-right-color: rgba(255,255,255,1); }
+    }
+
+    /* SUBTEXT */
+    .subtext {
+      margin-top: 12px;
+      margin-bottom: 35px;
+      font-size: 17px;
+      color: var(--accent-muted);
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.55;
+    }
+
+    /* LOGO GRID */
+    .uni-logos {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px 10px;
+      justify-items: center;
+      margin-bottom: 30px;
+    }
+
+    .uni-logos img {
+      width: 110px;
+      opacity: 0.95;
+      transition: 0.2s ease;
+    }
+    .uni-logos img:hover { opacity: 1; }
+
+    /* TESTIMONIALS */
+    .quote-wrapper {
+      width: 100%;
+      max-width: 900px;
+      margin: 40px auto 60px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .quote-track {
+      display: flex;
+      transition: transform 0.9s ease;
+    }
+
+    .quote-block {
+      width: 100%;
+      flex-shrink: 0;
+      text-align: center;
+      padding: 25px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .quote-mark, .closing-quote {
+      font-size: 60px;
+      opacity: 0.55;
+      user-select: none;
+      font-family: Georgia, serif;
+    }
+    .quote-mark { margin-bottom: 10px; }
+    .closing-quote { margin-top: 10px; }
+
+    .quote-text {
+      font-family: "Courier New", monospace;
+      font-size: 24px;
+      line-height: 1.6;
+      max-width: 650px;
+      padding: 0 25px;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+
+    .quote-author {
+      font-family: "Courier New", monospace;
+      font-size: 16px;
+      color: var(--accent-muted);
+      margin-top: 14px;
+    }
+
+    /* FORM */
+    .card {
+      background: var(--card-dark);
+      padding: 34px 28px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+      margin-top: 45px;
+      text-align: left;
+    }
+
+    label {
+      margin-top: 18px;
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    input, select, textarea {
+      background: #111827;
+      border: 1px solid rgba(255,255,255,0.22);
+      color: var(--accent);
+      width: 100%;
+      padding: 13px;
+      font-size: 15px;
+    }
+    textarea { min-height: 130px; }
+
+    button {
+      margin-top: 26px;
+      padding: 14px 22px;
+      background: var(--accent);
+      color: #111827;
+      border: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      cursor: pointer;
+    }
+    button:hover { filter: brightness(.9); }
+
+    #form-status {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #4ade80;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">MENTURA</a></div>
+  <nav>
+    <a href="speak-to-ug.html">UG Students</a>
+    <a href="speak-to-da.html">Degree Apprentices</a>
+    <a href="interns.html">Interns</a>
+    <a href="ps-help.html">UG Help</a>
+    <a href="da-help.html">DA Help</a>
+    <a href="tutor.html">Tutoring Services</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main>
+
+  <div id="typing-main" class="typing"></div>
+
+  <div class="subtext">
+    Our students are from the best universities in the UK — and they’re here to help you succeed.
+    Why? Because they were in your shoes not too long ago, and they understand the importance of honest guidance from people who’ve already walked the path you’re starting.
+  </div>
+
+  <div class="uni-logos">
+    <img src="logos/warwick.png" alt="Warwick">
+    <img src="logos/lse.png" alt="LSE">
+    <img src="logos/ucl.png" alt="UCL">
+    <img src="logos/imperial.png" alt="Imperial">
+    <img src="logos/oxford.png" alt="Oxford">
+    <img src="logos/cambridge.png" alt="Cambridge">
+  </div>
+
+  <div id="typing-tips" class="typing-small"></div>
+
+  <!-- TESTIMONIALS -->
+  <div class="quote-wrapper">
+    <div class="quote-track" id="quote-track">
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Really know what you want to study and why. That clarity sets the direction and the drive to complete your super-curriculars.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Afif Sajid, BSc Mechanical Engineering, Imperial College London</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Demonstrate top-tier quantitative ability and genuine curiosity by going beyond the curriculum through self-driven projects, competitions or analytical work.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Alex Lahdiri, BSc Economics, Finance & Data Science, Imperial College London</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Find books to read, be curious, and explore the module list for the course you want to study. Indicative reading lists show real research.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Jayden Engmann, BSc Management, The London School of Economics and Political Science</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Immerse yourself in the intricacies of the subject. Genuinely find your ‘why’ — the reason you want to pursue further education in this field.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Ravi Thakrar, BSc Mathematics & Economics, The London School of Economics and Political Science</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Practice mock interviews, reach out to connections, and try to set up real mock sessions — practice truly makes perfect.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Yahya Ali, BA Philosophy, Politics & Economics, University of Oxford</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Consistently revising for 30 minutes a day beats revising once a week for five hours. Let your work compound.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Ilyes Kallel, BSc Statistics, Economics & Finance, UCL</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Invest heavily in your extracurriculars and show the real, personal reason why you want to study this subject.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Ankur Dalal, BSc Geography & Economics, UCL</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Applying to university can be nerve-wracking, but remember that there are always multiple paths to reach the same destination — one university decision will not define your future.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Hugo Masier, BSc Economics, The London School of Economics and Political Science</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Start preparing for admissions tests as early as possible — don’t leave it until Year 13, as real improvement takes consistent time and effort.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Kiran Patel, BSc Economics, Finance & Data Science, Imperial College London</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Everyone is applying to university, and everyone is on their own journey — so focus on yours. Be unique in your application, whatever ‘unique’ looks like to you.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">— Usman Siddique, BSc Mathematics with Statistics, Imperial College London</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="card">
+    <form id="ug-form" action="https://formspree.io/f/mnneozge" method="POST">
+      <input type="hidden" name="_redirect" value="thank-you-ug.html">
+
+      <label>What is your name?</label>
+      <input type="text" name="Name" required>
+
+      <label>What is your email?</label>
+      <input type="email" name="Email" required>
+
+      <label>How did you hear about us?</label>
+      <select name="How did you hear about us?" required>
+        <option value="">-- Select --</option>
+        <option>CashFlowClub</option>
+        <option>Mentura</option>
+        <option>LinkedIn</option>
+        <option>Word of Mouth</option>
+        <option>Other</option>
+      </select>
+
+      <label>What year are you in and what are you studying?</label>
+      <input type="text" name="Year and Study" required>
+
+      <label>Who would you like to speak to? (e.g., BSc Economics)</label>
+      <input type="text" name="Preferred UG" required>
+
+      <label>When are you free?</label>
+      <input type="text" name="Availability" required>
+
+      <label>Tell me a bit about yourself / why you want the call</label>
+      <textarea name="About You" required></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <p id="form-status"></p>
+  </div>
+
+</main>
+
+<script>
+function typeEffect(id, text, speed = 65) {
+  const el = document.getElementById(id);
+  el.textContent = "";
+  let i = 0;
+  function typing() {
+    if (i < text.length) {
+      el.textContent = text.substring(0, i + 1);
+      i++;
+      setTimeout(typing, speed);
+    }
+  }
+  typing();
+}
+
+window.onload = function() {
+  typeEffect("typing-main", "Speak to an Undergraduate Student");
+  typeEffect("typing-tips", "Top Tips");
+  setInterval(() => typeEffect("typing-tips", "Top Tips"), 6000);
+};
+</script>
+
+<script>
+let qIndex = 0;
+const track = document.getElementById("quote-track");
+const totalQuotes = track.children.length;
+
+function rotateQuotes() {
+  qIndex = (qIndex + 1) % totalQuotes;
+  track.style.transform = `translateX(-${qIndex * 100}%)`;
+}
+
+setInterval(rotateQuotes, 7000);
+</script>
+
+<script>
+const form = document.getElementById("ug-form");
+const status = document.getElementById("form-status");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const data = new FormData(form);
+
+  const response = await fetch(form.action, {
+    method: form.method,
+    body: data,
+    headers: { 'Accept': 'application/json' }
+  });
+
+  if (response.ok) {
+    window.location.href = "thank-you-ug.html";
+  } else {
+    status.innerHTML = "Something went wrong. Please try again.";
+  }
+});
+</script>
+
+</body>
+</html>
+
+
+
+
