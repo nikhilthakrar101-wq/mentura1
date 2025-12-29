@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -219,6 +220,7 @@
       margin-top: 15px;
       font-size: 16px;
       color: #4ade80;
+      min-height: 1.2em;
     }
   </style>
 </head>
@@ -357,7 +359,9 @@
 
   <!-- FORM -->
   <div class="card">
-    <form id="ug-form" action="https://formspree.io/f/mojqrkok">
+    <!-- ✅ IMPORTANT: method="POST" so Formspree receives the submission -->
+    <form id="ug-form" action="https://formspree.io/f/mojqrkok" method="POST">
+      <!-- optional: you can keep this, but JS redirect handles it anyway -->
       <input type="hidden" name="_redirect" value="thank-you-ug.html">
 
       <label>What is your name?</label>
@@ -437,19 +441,37 @@ const status = document.getElementById("form-status");
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  status.style.color = "#e5e7eb";
+  status.textContent = "Submitting...";
 
-  const data = new FormData(form);
+  try {
+    const data = new FormData(form);
 
-  const response = await fetch(form.action, {
-    method: form.method,
-    body: data,
-    headers: { 'Accept': 'application/json' }
-  });
+    const response = await fetch(form.action, {
+      method: "POST", // ✅ explicit POST
+      body: data,
+      headers: { "Accept": "application/json" }
+    });
 
-  if (response.ok) {
-    window.location.href = "thank-you-ug.html";
-  } else {
-    status.innerHTML = "Something went wrong. Please try again.";
+    if (response.ok) {
+      // ✅ success redirect
+      window.location.href = "thank-you-ug.html";
+      return;
+    }
+
+    // If Formspree returns errors, show them
+    let msg = "Something went wrong. Please try again.";
+    const resData = await response.json().catch(() => null);
+    if (resData && resData.errors && resData.errors.length) {
+      msg = resData.errors.map(e => e.message).join(" ");
+    }
+
+    status.style.color = "#fca5a5";
+    status.textContent = msg;
+  } catch (err) {
+    console.error(err);
+    status.style.color = "#fca5a5";
+    status.textContent = "Network/CORS error. Open the console for details.";
   }
 });
 </script>
