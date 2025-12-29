@@ -1,0 +1,690 @@
+88888
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mextura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #111827;
+      --card-dark: #1f2933;
+      --accent: #ffffff;
+      --accent-muted: #9ca3af;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Inter", sans-serif; background: var(--bg-dark); color: var(--accent); }
+
+    /* Smooth scroll for Memberships jump */
+    html { scroll-behavior: smooth; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .logo { font-size: 26px; font-weight: 700; }
+
+    nav a {
+      margin-left: 24px;
+      font-size: 14px;
+      color: var(--accent-muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    nav a:hover { color: var(--accent); }
+
+    .hero {
+      margin: 80px auto 20px;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 30px;
+    }
+
+    .hero h1 {
+      font-size: 50px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 .h1-typing {
+      display: inline-block;
+      position: relative;
+      white-space: nowrap;
+      clip-path: inset(0 100% 0 0);
+      animation: h1typing 3s steps(40) forwards;
+    }
+
+    .hero h1 .h1-typing::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -2px;
+      width: 2px;
+      height: 100%;
+      background: #ffffff;
+      animation: blink 0.7s step-end infinite;
+    }
+
+    @keyframes h1typing {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .typing-paragraph {
+      display: inline-block;
+      font-size: 19px;
+      line-height: 1.3;
+      color: #ffffff;
+    }
+
+    .caret {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: #ffffff;
+      animation: blink 0.7s step-end infinite;
+    }
+
+    .logo-carousel {
+      width: 100%;
+      overflow: hidden;
+      margin: 70px 0;
+    }
+
+    .logo-track {
+      display: flex;
+      align-items: center;
+      animation: scroll 25s linear infinite;
+      padding-left: 60px;
+      transform: translateZ(0);
+    }
+
+    /* Even spacing: each logo gets the same slot width */
+    .logo-slot {
+      flex: 0 0 160px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo-track img {
+      height: 55px;
+      max-width: 120px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.85;
+      transition: 0.3s;
+    }
+
+    .logo-track img[src="logos/imperial.png"],
+    .logo-track img[src="logos/cambridge.png"] { height: 78px; }
+
+    .logo-track img[src="logos/deutschebank.png"] { height: 70px; }
+
+    .logo-track img:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .section-header {
+      text-align: center;
+      font-size: 36px;
+      font-weight: 700;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    .sections {
+      max-width: 1000px;
+      margin: 60px auto 120px;
+      padding: 0 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+    }
+
+    .card {
+      background: var(--card-dark);
+      padding: 28px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.45);
+      transition: transform 0.25s;
+    }
+    .card:hover { transform: translateY(-5px); }
+
+    .card h3 { font-size: 22px; margin-bottom: 12px; }
+    .card p { font-size: 16px; color: var(--accent-muted); margin-bottom: 20px; line-height: 1.5; }
+    .card a { color: #fff; text-decoration: underline; font-weight: 500; }
+
+    .how-it-works {
+      max-width: 900px;
+      margin: 50px auto 60px;
+      padding: 0 30px;
+      text-align: center;
+    }
+
+    .how-it-works h2 { font-size: 32px; margin-bottom: 20px; font-weight: 700; }
+    .how-it-works p { font-size: 18px; color: var(--accent-muted); line-height: 1.7; }
+
+
+    /* -------------------------
+       MEMBERSHIP SECTION (WITH SLIDE)
+    --------------------------*/
+
+    .membership-section {
+      max-width: 900px;
+      margin: 100px auto;
+      padding: 0 30px;
+    }
+
+    /* start hidden & shifted */
+    .slide-left,
+    .slide-right {
+      opacity: 0;
+      transition: all 1s ease-out;
+    }
+
+    .slide-left { transform: translateX(-60px); }
+    .slide-right { transform: translateX(60px); }
+
+    /* when visible */
+    .visible {
+      opacity: 1 !important;
+      transform: translateX(0) !important;
+    }
+
+    .membership-card-full {
+      background: var(--card-dark);
+      padding: 40px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 14px 38px rgba(0,0,0,0.5);
+      margin-bottom: 40px;
+    }
+
+    .membership-card-full h3 {
+      font-size: 30px;
+      margin-bottom: 14px;
+    }
+
+    .membership-desc {
+      font-size: 18px;
+      color: var(--accent-muted);
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+
+    /* clean aligned checkmark bullets */
+    .membership-list {
+      list-style: none;
+      margin-bottom: 32px;
+      padding-left: 0;
+    }
+
+    .membership-list li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 16px;
+      font-size: 16px;
+      color: var(--accent-muted);
+      line-height: 1.6;
+    }
+
+    .membership-list li::before {
+      content: "✔";
+      position: absolute;
+      left: 0;
+      top: 0.15em;
+      font-size: 18px;
+      color: #4ade80;
+      line-height: 1;
+    }
+
+    .membership-link {
+      color: #ffffff;
+      text-decoration: underline;
+      font-size: 17px;
+      font-weight: 500;
+    }
+
+    .membership-link:hover { opacity: 0.8; }
+
+    /* FAQ */
+    .faq {
+      max-width: 1000px;
+      margin: 60px auto 100px;
+      padding: 0 30px;
+    }
+
+    .faq h2 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px 30px;
+    }
+
+    .faq-box {
+      background: var(--card-dark);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 18px 20px;
+      transition: 0.25s;
+    }
+    .faq-box:hover { border-color: rgba(255,255,255,0.18); }
+
+    .faq-question { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+    .faq-answer { font-size: 16px; color: var(--accent-muted); line-height: 1.6; }
+
+    footer {
+      background: #0d1523;
+      padding: 60px 40px;
+      margin-top: 80px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+
+    .footer-title { font-size: 20px; font-weight: 600; margin-bottom: 14px; }
+
+    .footer-link, .footer-text {
+      color: var(--accent-muted);
+      font-size: 16px;
+      line-height: 1.8;
+      text-decoration: none;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--accent-muted);
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">MENTURA</div>
+  <nav>
+    <a href="speak-to-ug.html">UG Students</a>
+    <a href="speak-to-da.html">Degree Apprentices</a>
+    <a href="interns.html">Interns</a>
+    <a href="ps-help.html">UG Help</a>
+    <a href="da-help.html">DA Help</a>
+    <a href="#memberships">Memberships</a>
+    <a href="tutor.html">Tutoring Services</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1><span class="h1-typing">Helping Students Get Real Insights.</span></h1>
+  <p class="typing-paragraph"><span id="hero-typing"></span></p>
+</section>
+
+<!-- LOGO CAROUSEL -->
+<div class="logo-carousel" aria-label="Partner logos carousel">
+  <div class="logo-track">
+    <div class="logo-slot"><img src="logos/oxford.png" alt="University of Oxford" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/cambridge.png" alt="University of Cambridge" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/lse.png" alt="London School of Economics" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/ucl.png" alt="UCL" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/imperial.png" alt="Imperial College London" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/warwick.png" alt="University of Warwick" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/jpmorgan.png" alt="J.P. Morgan" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/amazon.png" alt="Amazon" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/deutschebank.png" alt="Deutsche Bank" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/hsbc.png" alt="HSBC" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/deloitte.png" alt="Deloitte" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/kpmg.png" alt="KPMG" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/accenture.png" alt="Accenture" loading="lazy" decoding="async"></div>
+
+    <!-- duplicates -->
+    <div class="logo-slot"><img src="logos/oxford.png" alt="University of Oxford" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/cambridge.png" alt="University of Cambridge" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/lse.png" alt="London School of Economics" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/ucl.png" alt="UCL" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/imperial.png" alt="Imperial College London" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/warwick.png" alt="University of Warwick" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/jpmorgan.png" alt="J.P. Morgan" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/amazon.png" alt="Amazon" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/deutschebank.png" alt="Deutsche Bank" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/hsbc.png" alt="HSBC" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/deloitte.png" alt="Deloitte" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/kpmg.png" alt="KPMG" loading="lazy" decoding="async"></div>
+    <div class="logo-slot"><img src="logos/accenture.png" alt="Accenture" loading="lazy" decoding="async"></div>
+  </div>
+</div>
+
+<h2 class="section-header">What We Offer</h2>
+
+<section class="sections">
+
+  <div class="card">
+    <h3>Speak to a UG Student</h3>
+    <p>Real insights into university life, applications, and degrees.</p>
+    <a href="speak-to-ug.html">Start Now →</a>
+  </div>
+
+  <div class="card">
+    <h3>Speak to a Degree Apprentice</h3>
+    <p>Learn how real apprentices secured roles at top firms.</p>
+    <a href="speak-to-da.html">Start Now →</a>
+  </div>
+
+  <div class="card">
+    <h3>Intern Insights</h3>
+    <p>Coming soon. Speak to interns from leading companies.</p>
+    <a href="interns.html">Learn More →</a>
+  </div>
+
+  <div class="card">
+    <h3>UG Application Help</h3>
+    <p>A one stop interactive hub covering everything you need for your UG application.</p>
+    <a href="ps-help.html">Get Help →</a>
+  </div>
+
+  <div class="card">
+    <h3>DA Application Help</h3>
+    <p>A one stop interactive hub covering the full DA application process, step by step.</p>
+    <a href="da-help.html">Get Support →</a>
+  </div>
+
+  <div class="card">
+    <h3>Tutors</h3>
+    <p>Securing offers is one thing, getting the grades is another. Maximise your chances with our specialised tutors.</p>
+    <a href="tutor.html">Learn More →</a>
+  </div>
+
+</section>
+
+<section class="how-it-works">
+  <h2>How It Works</h2>
+  <p>
+    Fill out the form on any of our pages. Our team will respond within 48 hours
+    to confirm a time for your call. You’ll then speak directly with a real
+    university student, degree apprentice or intern.
+    No more scrolling endlessly on LinkedIn, just real insight from real people.
+  </p>
+</section>
+
+
+<!-- ⭐ UPDATED MEMBERSHIP SECTION ⭐ -->
+<section class="membership-section" id="memberships">
+
+  <!-- FREE MEMBERSHIP -->
+  <div class="membership-card-full slide-left">
+    <h3>Free Membership</h3>
+    <p class="membership-desc">
+      Get essential guidance and resources to support your academic and career journey, completely free.
+    </p>
+
+    <ul class="membership-list">
+      <li>1 call per month with any available Mentura mentor</li>
+      <li>Full access to all core resources: UG Students, Degree Apprentices, Interns, Personal Statement Help, DA Application Help, Commercial Awareness</li>
+      <li>Choose one weekly newsletter (Deal of the Week, Economics Insight, Market Breakdown)</li>
+      <li>Weekly access to new opportunities</li>
+    </ul>
+
+    <a href="checkout.html" class="membership-link">Join for Free →</a>
+  </div>
+
+  <!-- PAID MEMBERSHIP -->
+  <div class="membership-card-full slide-right">
+    <h3>Mentura Plus — £9.99/month</h3>
+    <p class="membership-desc">
+      Unlock the full Mentura experience with personalised support, exclusive insights, and advanced tools designed to accelerate your academic and career growth.
+    </p>
+
+    <ul class="membership-list">
+      <li>4 calls per month with any available Mentura mentor</li>
+      <li>Exclusive access to new interns</li>
+      <li>Full access to all premium resources: UG Students, Degree Apprentices, Interns, Personal Statement Help, DA Application Help, Commercial Awareness</li>
+      <li>Access to all three weekly newsletters</li>
+      <li>Weekly exclusive opportunities</li>
+      <li>Mock interviews</li>
+      <li>1 CV review and 1 Personal Statement review per month</li>
+    </ul>
+
+    <a href="checkout.html" class="membership-link">Get Mentura Plus →</a>
+  </div>
+
+</section>
+
+
+<section class="faq">
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="faq-grid">
+
+    <div class="faq-box">
+      <div class="faq-question">How long are the calls?</div>
+      <div class="faq-answer">Calls last up to 15 minutes to keep them focused and helpful.</div>
+    </div>
+
+    <div class="faq-box">
+      <div class="faq-question">Can I have unlimited calls?</div>
+      <div class="faq-answer">No. We limit calls so the service stays fair and accessible for everyone.</div>
+    </div>
+
+    <div class="faq-box">
+      <div class="faq-question">What should I bring to the call?</div>
+      <div class="faq-answer">A notepad, clear questions, and an open mind.</div>
+    </div>
+
+    <div class="faq-box">
+      <div class="faq-question">What if I cannot make the time?</div>
+      <div class="faq-answer">Just email us and we’ll happily reschedule.</div>
+    </div>
+
+    <div class="faq-box">
+      <div class="faq-question">What if my course is niche?</div>
+      <div class="faq-answer">If we don’t have someone immediately available, we’ll find a suitable match as soon as possible.</div>
+    </div>
+
+    <div class="faq-box">
+      <div class="faq-question">Are master's students available?</div>
+      <div class="faq-answer">Not yet, but we will always try to match you with someone who can help.</div>
+    </div>
+
+    <div class="faq-box">
+      <div class="faq-question">How is the call set up?</div>
+      <div class="faq-answer">All calls are held on Zoom or Google Meet. You'll receive a link once confirmed.</div>
+    </div>
+
+    <div class="faq-box">
+      <div class="faq-question">Will CV & Personal Statement reviews be done on the call?</div>
+      <div class="faq-answer">
+        No, students are there to guide you.
+        If you need your CV or personal statement reviewed, contact us and we’ll assign someone to review it.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+
+    <div>
+      <div class="footer-title">Explore</div>
+      <a class="footer-link" href="speak-to-ug.html">UG Students</a><br>
+      <a class="footer-link" href="speak-to-da.html">Degree Apprentices</a><br>
+      <a class="footer-link" href="interns.html">Interns</a><br>
+      <a class="footer-link" href="ps-help.html">PS Help</a><br>
+      <a class="footer-link" href="da-help.html">DA Help</a><br>
+      <a class="footer-link" href="about.html">About</a><br>
+    </div>
+
+    <div>
+      <div class="footer-title">Mentor Programme</div>
+      <a class="footer-link" href="mentor-signup.html">Become a Mentor →</a><br>
+      <p class="footer-text">Join Mentura and help guide the next generation.</p>
+    </div>
+
+    <div>
+      <div class="footer-title">Contact</div>
+      <p class="footer-text">Email:
+        <a class="footer-link" href="mailto:menturacontact@gmail.com">
+          menturacontact@gmail.com
+        </a>
+      </p>
+      <p class="footer-text">LinkedIn:
+        <a class="footer-link" target="_blank" href="https://www.linkedin.com/in/nikhil-thakrar14/">
+          nikhil-thakrar14
+        </a>
+      </p>
+    </div>
+
+    <div>
+      <div class="footer-title">Social</div>
+      <p class="footer-text">
+        Follow <strong>CashFlowClub</strong> on TikTok for student career and finance content.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">Helping Students Get Real Insights.</div>
+</footer>
+
+<script>
+  const sentences = [
+    "Connect with university students, degree apprentices, and interns.",
+    "Real advice.",
+    "Real experiences.",
+    "Real understanding."
+  ];
+
+  const paragraphEl = document.getElementById("hero-typing");
+  let sentenceIndex = 0;
+  let charIndex = 0;
+
+  function typeLoop() {
+    const current = sentences[sentenceIndex];
+    const partial = current.slice(0, charIndex + 1);
+
+    const previousLines = sentences.slice(0, sentenceIndex);
+    let html = "";
+    previousLines.forEach(line => html += line + "<br>");
+    html += partial + '<span class="caret"></span>';
+
+    paragraphEl.innerHTML = html;
+
+    charIndex++;
+
+    if (charIndex < current.length) {
+      setTimeout(typeLoop, 35);
+    } else {
+      sentenceIndex++;
+      charIndex = 0;
+      if (sentenceIndex < sentences.length) {
+        setTimeout(typeLoop, 300);
+      } else {
+        paragraphEl.innerHTML = sentences.join("<br>") + '<span class="caret"></span>';
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(typeLoop, 500);
+  });
+
+  // Slide-in observer for membership cards
+  const slidingElements = document.querySelectorAll('.slide-left, .slide-right');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.2 });
+
+  slidingElements.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
