@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Account | Mentura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg-dark: #111827;
+      --card-dark: #1f2933;
+      --accent: #ffffff;
+      --accent-muted: #9ca3af;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--accent);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 80px auto;
+      padding: 0 30px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--accent-muted);
+      margin-bottom: 70px;
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .plans {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+
+    .plan-card {
+      background: var(--card-dark);
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 30px;
+      cursor: pointer;
+      transition: 0.25s;
+      position: relative;
+    }
+
+    .plan-card.active {
+      border-color: #4ade80;
+    }
+
+    .plan-card.popular::after {
+      content: "Most Popular";
+      position: absolute;
+      top: -12px;
+      right: 18px;
+      background: #4ade80;
+      color: #111827;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 6px;
+    }
+
+    .plan-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .plan-price {
+      font-size: 18px;
+      color: var(--accent-muted);
+      margin-bottom: 16px;
+    }
+
+    .plan-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 15px;
+      color: var(--accent-muted);
+    }
+
+    .plan-list li {
+      margin-bottom: 10px;
+    }
+
+    .testimonial-rotator {
+      margin: 90px 0;
+      text-align: center;
+      min-height: 32px;
+    }
+
+    .testimonial-text {
+      font-size: 20px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .testimonial-text.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .form-box {
+      background: var(--card-dark);
+      border-radius: 10px;
+      padding: 40px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: #111827;
+      color: var(--accent);
+    }
+
+    input::placeholder {
+      color: var(--accent-muted);
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    button {
+      margin-top: 28px;
+      padding: 14px 22px;
+      background: var(--accent);
+      color: #111827;
+      border: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      filter: brightness(.9);
+    }
+
+    .small-note {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--accent-muted);
+    }
+
+    @media (max-width: 760px) {
+      .plans,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonial-text {
+        font-size: 17px;
+      }
+    }
+  </style>
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseClient = supabase.createClient(
+      "YOUR_SUPABASE_URL",
+      "YOUR_SUPABASE_ANON_KEY"
+    );
+  </script>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Create your Mentura account</h1>
+  <div class="subtitle">
+    Choose a plan, create your account, and get clarity on your next step.
+  </div>
+
+  <div class="plans">
+    <div class="plan-card" data-plan="free">
+      <div class="plan-title">Free</div>
+      <div class="plan-price">£0</div>
+      <ul class="plan-list">
+        <li>1 mentor call per month</li>
+        <li>Access to core Mentura resources</li>
+        <li>1 weekly newsletter</li>
+      </ul>
+    </div>
+
+    <div class="plan-card popular" data-plan="plus">
+      <div class="plan-title">Mentura Plus</div>
+      <div class="plan-price">£9.99 / month</div>
+      <ul class="plan-list">
+        <li>4 mentor calls per month</li>
+        <li>Mock interviews & application support</li>
+        <li>CV & personal statement reviews</li>
+        <li>All newsletters & exclusive opportunities</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="testimonial-rotator">
+    <div id="testimonial" class="testimonial-text"></div>
+  </div>
+
+  <div class="form-box">
+    <form onsubmit="handleSignup(event)">
+      <div class="form-grid">
+        <input type="text" placeholder="First name" required>
+        <input type="text" placeholder="Last name" required>
+        <input class="full" type="email" placeholder="Email address" required>
+        <input class="full" type="password" placeholder="Password" required>
+      </div>
+
+      <button id="submit-btn">Continue</button>
+    </form>
+
+    <div class="small-note">
+      By creating an account, you agree to Mentura’s Terms & Privacy Policy.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let selectedPlan = "plus";
+
+  const cards = document.querySelectorAll(".plan-card");
+  const button = document.getElementById("submit-btn");
+
+  function updateUI() {
+    cards.forEach(card =>
+      card.classList.toggle("active", card.dataset.plan === selectedPlan)
+    );
+
+    button.textContent =
+      selectedPlan === "plus"
+        ? "Continue to payment"
+        : "Create free account";
+  }
+
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      selectedPlan = card.dataset.plan;
+      updateUI();
+    });
+  });
+
+  updateUI();
+
+  async function handleSignup(e) {
+    e.preventDefault();
+
+    const email = document.querySelector('[type="email"]').value;
+    const password = document.querySelector('[type="password"]').value;
+
+    const { error } = await supabaseClient.auth.signUp({
+      email,
+      password
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    if (selectedPlan === "plus") {
+      window.location.href = "YOUR_STRIPE_PAYMENT_LINK";
+    } else {
+      window.location.href = "/dashboard.html";
+    }
+  }
+
+  const testimonials = [
+    "Mentura helped me understand how degree apprenticeships actually work",
+    "More clarity in one conversation than weeks of independent research",
+    "I finally understood the difference between university and degree apprenticeships",
+    "The application and assessment centre process was explained clearly",
+    "I stopped guessing and started making confident decisions"
+  ];
+
+  let tIndex = 0;
+  const tEl = document.getElementById("testimonial");
+
+  function rotateTestimonial() {
+    tEl.classList.remove("active");
+    setTimeout(() => {
+      tEl.textContent = testimonials[tIndex];
+      tEl.classList.add("active");
+      tIndex = (tIndex + 1) % testimonials.length;
+    }, 400);
+  }
+
+  rotateTestimonial();
+  setInterval(rotateTestimonial, 4500);
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
