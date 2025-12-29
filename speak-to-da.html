@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Speak to a Degree Apprentice • Mentura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg-dark: #111827;
+      --card-dark: #1f2933;
+      --accent: #ffffff;
+      --accent-muted: #9ca3af;
+    }
+
+    body {
+      background: var(--bg-dark);
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--accent);
+    }
+
+    header {
+      padding: 18px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      text-transform: uppercase;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .logo a {
+      text-decoration: none;
+      color: var(--accent);
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 18px;
+    }
+
+    nav a {
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--accent-muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    nav a:hover { color: var(--accent); }
+
+    main {
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 0 22px;
+      text-align: center;
+    }
+
+    .typing, .typing-small {
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid var(--accent);
+      width: fit-content;
+      margin: 0 auto;
+      animation: blink 0.8s infinite;
+    }
+
+    .typing {
+      font-size: 34px;
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
+
+    .typing-small {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 40px auto 25px;
+    }
+
+    @keyframes blink {
+      0% { border-right-color: rgba(255,255,255,1); }
+      50% { border-right-color: rgba(255,255,255,0); }
+      100% { border-right-color: rgba(255,255,255,1); }
+    }
+
+    .company-highlight {
+      margin-top: 20px;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 17px;
+      line-height: 1.7;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(25px);
+      animation: slideFadeUp 1s ease forwards;
+      animation-delay: 0.4s;
+    }
+
+    .company-highlight span {
+      font-weight: 800;
+    }
+
+    @keyframes slideFadeUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .quote-wrapper {
+      width: 100%;
+      max-width: 900px;
+      margin: 40px auto 60px;
+      overflow: hidden;
+    }
+
+    .quote-track {
+      display: flex;
+      transition: transform 0.9s ease;
+    }
+
+    .quote-block {
+      width: 100%;
+      flex-shrink: 0;
+      padding: 25px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .quote-mark, .closing-quote {
+      font-size: 60px;
+      opacity: 0.55;
+      font-family: Georgia, serif;
+    }
+
+    .quote-text {
+      font-family: "Courier New", monospace;
+      font-size: 24px;
+      line-height: 1.6;
+      max-width: 650px;
+      padding: 0 25px;
+    }
+
+    .quote-author {
+      font-family: "Courier New", monospace;
+      font-size: 15px;
+      color: var(--accent-muted);
+      margin-top: 14px;
+    }
+
+    .card {
+      background: var(--card-dark);
+      padding: 34px 28px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+      margin-top: 45px;
+      text-align: left;
+    }
+
+    label {
+      margin-top: 18px;
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      background: #111827;
+      border: 1px solid rgba(255,255,255,0.22);
+      color: var(--accent);
+      width: 100%;
+      padding: 13px;
+      font-size: 15px;
+    }
+
+    textarea { min-height: 130px; }
+
+    button {
+      margin-top: 26px;
+      padding: 14px 22px;
+      background: var(--accent);
+      color: #111827;
+      border: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">MENTURA</a></div>
+  <nav>
+    <a href="speak-to-ug.html">UG Students</a>
+    <a href="speak-to-da.html">Degree Apprentices</a>
+    <a href="interns.html">Interns</a>
+    <a href="ps-help.html">UG Help</a>
+    <a href="da-help.html">DA Help</a>
+    <a href="tutor.html">Tutoring Services</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main>
+
+  <div id="typing-main" class="typing"></div>
+
+  <div class="company-highlight">
+    Our degree apprentices are currently working across <span>elite global banks</span>,
+    <span>Big Four firms</span>,
+    <span>top-tier consulting houses</span>, and
+    <span>high-growth technology companies</span>.
+    <br><br>
+    They’ve successfully navigated <span>intense application processes</span>,
+    <span>assessment centres</span>, and
+    <span>high-pressure interviews</span> . They now offer
+    <span>direct, practical advice</span> to help you secure offers.
+  </div>
+
+  <div id="typing-tips" class="typing-small"></div>
+
+  <div class="quote-wrapper">
+    <div class="quote-track" id="quote-track">
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Research the company’s mission, goals, and recent work. Then use examples from school, part-time work, or extracurriculars to demonstrate your motivation and potential to make an impact.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">Investment Banking Apprentice — Deutsche Bank</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Take failures on the chin, keep learning, and move forward. It’s a brutal market, but the quicker you adapt, the better positioned you’ll be.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">Data Science Apprentice — Direct Line Group</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Stay open and curious at all times — spot opportunities to learn and grow wherever you are.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">Financial Services Apprentice — J.P. Morgan</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Always trust your ability, no matter what. Truly believe you are the best person for the role and try to relay this confidence to the interviewer.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">Project Management Apprentice — Amazon</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Never underestimate yourself — confidence is key to smashing interviews, as long as you are well prepared.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">Audit Associate — Deloitte</div>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-mark">❝</div>
+        <div class="quote-text">
+          Research what is happening in your desired field and the business you are applying to. Employers are always impressed when you understand both the company and the sector.
+        </div>
+        <div class="closing-quote">❞</div>
+        <div class="quote-author">Wealth and Personal Banking Apprentice — HSBC</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <form id="daForm" action="javascript:void(0);" method="POST">
+
+      <label>What is your name?</label>
+      <input type="text" name="Name" required>
+
+      <label>What is your email?</label>
+      <input type="email" name="Email" required>
+
+      <label>How did you hear about us?</label>
+      <select name="Source" required>
+        <option value="">-- Select --</option>
+        <option>CashFlowClub</option>
+        <option>Mentura</option>
+        <option>LinkedIn</option>
+        <option>Word of Mouth</option>
+        <option>Other</option>
+      </select>
+
+      <label>What year are you in and what are you studying?</label>
+      <input type="text" name="Year and Study" required>
+
+      <label>Who would you like to speak to?</label>
+      <input type="text" name="Preferred DA" required>
+
+      <label>When are you free?</label>
+      <input type="text" name="Availability" required>
+
+      <label>Tell me a bit about yourself / why you want the call</label>
+      <textarea name="About You" required></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+</main>
+
+<script>
+function typeEffect(id, text, speed = 65) {
+  const el = document.getElementById(id);
+  let i = 0;
+  function typing() {
+    if (i < text.length) {
+      el.textContent = text.substring(0, i + 1);
+      i++;
+      setTimeout(typing, speed);
+    }
+  }
+  typing();
+}
+
+window.onload = function() {
+  typeEffect("typing-main", "Speak to a Degree Apprentice");
+  typeEffect("typing-tips", "Top Tips");
+  setInterval(() => typeEffect("typing-tips", "Top Tips"), 6000);
+};
+</script>
+
+<script>
+let qIndex = 0;
+const track = document.getElementById("quote-track");
+setInterval(() => {
+  qIndex = (qIndex + 1) % track.children.length;
+  track.style.transform = `translateX(-${qIndex * 100}%)`;
+}, 7000);
+</script>
+
+<script>
+document.getElementById("daForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const btn = this.querySelector("button");
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+
+  fetch("https://formspree.io/f/mrbnwoyv", {
+    method: "POST",
+    body: new FormData(this),
+    headers: { "Accept": "application/json" }
+  })
+  .then(res => {
+    if (res.ok) {
+      window.location.href = "thank-you-da.html";
+    } else {
+      throw new Error();
+    }
+  })
+  .catch(() => {
+    alert("Submission failed. Please try again.");
+    btn.disabled = false;
+    btn.textContent = "Submit";
+  });
+});
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
