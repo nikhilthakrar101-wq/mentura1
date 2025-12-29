@@ -1,0 +1,1515 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Degree Apprenticeship Hub • Mentura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg-dark: #111827;
+      --card-dark: #1f2933;
+      --card-darker: #16202a;
+      --accent: #ffffff;
+      --accent-muted: #9ca3af;
+      --border: rgba(255,255,255,0.08);
+      --border-soft: rgba(255,255,255,0.06);
+      --shadow: 0 14px 32px rgba(0,0,0,0.35);
+
+      --good: rgba(34,197,94,0.18);
+      --warn: rgba(245,158,11,0.18);
+      --info: rgba(59,130,246,0.16);
+      --bad: rgba(239,68,68,0.16);
+
+      --radius: 16px;
+
+      --ease: cubic-bezier(.2,.9,.2,1);
+      --fast: 170ms;
+      --med: 280ms;
+      --slow: 520ms;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(255,255,255,0.06), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(59,130,246,0.09), transparent 55%),
+                  var(--bg-dark);
+      margin: 0;
+      color: var(--accent);
+      font-family: "Segoe UI", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Scroll progress */
+    .progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 3px;
+      width: 0%;
+      background: rgba(255,255,255,0.65);
+      z-index: 1000;
+      transition: width 60ms linear;
+    }
+
+    header {
+      padding: 18px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(10px);
+      gap: 18px;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    /* ✅ clickable logo (no design change) */
+    .logo a {
+      color: rgba(255,255,255,0.98);
+      text-decoration: none;
+    }
+
+    /* LINKS: no underline by default, underline only on hover/focus-visible */
+    .u-link,
+    nav a,
+    .text-action,
+    .nav-toggle-link,
+    .drawer-close,
+    .drawer-links a,
+    .toc a {
+      color: rgba(255,255,255,0.82);
+      text-decoration: none;
+      text-underline-offset: 6px;
+      text-decoration-color: rgba(255,255,255,0.85);
+      transition: color var(--fast) var(--ease), opacity var(--fast) var(--ease), text-decoration-color var(--fast) var(--ease);
+      cursor: pointer;
+    }
+
+    .u-link:hover,
+    nav a:hover,
+    .text-action:hover,
+    .nav-toggle-link:hover,
+    .drawer-close:hover,
+    .drawer-links a:hover,
+    .toc a:hover,
+    .u-link:focus-visible,
+    nav a:focus-visible,
+    .text-action:focus-visible,
+    .nav-toggle-link:focus-visible,
+    .drawer-close:focus-visible,
+    .drawer-links a:focus-visible,
+    .toc a:focus-visible {
+      color: rgba(255,255,255,0.98);
+      text-decoration: underline;
+      text-decoration-color: rgba(255,255,255,0.95);
+      opacity: 1;
+      outline: none;
+    }
+
+    /* Current page: no underline */
+    nav a.current {
+      color: rgba(255,255,255,0.98);
+      opacity: 0.98;
+      text-decoration: none;
+    }
+
+    /* Desktop nav (no | separators) */
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: nowrap;
+      overflow: hidden;
+    }
+
+    nav a {
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* Mobile nav toggle (text link) */
+    .nav-toggle-link {
+      display: none;
+      font-size: 13px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .mobile-drawer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(2px);
+    }
+
+    .drawer-panel {
+      position: absolute;
+      right: 12px;
+      top: 68px;
+      width: min(380px, calc(100% - 24px));
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      background: rgba(17,24,39,0.96);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      transform: translateY(-8px);
+      opacity: 0;
+      transition: transform var(--med) var(--ease), opacity var(--med) var(--ease);
+    }
+
+    .mobile-drawer.open { display: block; }
+    .mobile-drawer.open .drawer-panel { transform: translateY(0); opacity: 1; }
+
+    .drawer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .drawer-title {
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .drawer-links {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .drawer-links a {
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 8px 2px;
+      border-radius: 10px;
+    }
+
+    .drawer-links a.current {
+      color: rgba(255,255,255,0.98);
+      text-decoration: none;
+    }
+
+    @media (max-width: 980px) {
+      nav { display: none; }
+      .nav-toggle-link { display: inline-block; }
+      header { padding: 16px 18px; }
+    }
+
+    main {
+      max-width: 1250px;
+      margin: 36px auto 80px;
+      padding: 0 26px;
+    }
+
+    .page {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .page { grid-template-columns: 1fr; }
+      main { padding: 0 18px; }
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(31,41,51,0.96), rgba(31,41,51,0.90));
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 28px 26px;
+      will-change: transform;
+      animation: fadeUp var(--slow) var(--ease) both;
+    }
+
+    .hero {
+      padding: 34px 26px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(59,130,246,0.14), rgba(255,255,255,0.06) 45%, rgba(34,197,94,0.10));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      animation: fadeUp var(--slow) var(--ease) both;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: var(--accent-muted);
+      line-height: 1.7;
+      font-size: 17px;
+      margin: 0 0 12px;
+      max-width: 82ch;
+    }
+
+    .hero-help {
+      margin: 0 0 16px;
+      color: rgba(255,255,255,0.82);
+      font-size: 15.5px;
+      line-height: 1.6;
+    }
+
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .quick-links a {
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* Sidebar */
+    .sidebar { position: sticky; top: 84px; }
+    @media (max-width: 980px) { .sidebar { position: static; top: auto; } }
+
+    .toc-title {
+      font-size: 13px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.78);
+      margin: 0 0 10px;
+    }
+
+    /* Scrollable TOC */
+    .toc-scroll {
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+      padding-right: 8px;
+      margin-right: -8px;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .toc-scroll::-webkit-scrollbar { width: 10px; }
+    .toc-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 999px; }
+    .toc-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 999px; }
+    .toc-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.26); }
+
+    .toc {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc a {
+      display: block;
+      color: rgba(255,255,255,0.72);
+      padding: 8px 2px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .toc a.active {
+      color: rgba(255,255,255,0.98);
+      text-decoration: none;
+    }
+
+    /* Sections */
+    section {
+      scroll-margin-top: 96px;
+      margin-bottom: 18px;
+      animation: fadeUp var(--slow) var(--ease) both;
+      animation-delay: 60ms;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 0 0 10px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+    }
+
+    .hint {
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    p {
+      color: var(--accent-muted);
+      line-height: 1.75;
+      font-size: 16.5px;
+      margin: 0 0 14px;
+    }
+
+    ul {
+      margin: 10px 0 14px;
+      padding-left: 20px;
+      color: var(--accent-muted);
+      line-height: 1.75;
+      font-size: 16.5px;
+    }
+
+    ul li { margin-bottom: 10px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 820px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .subcard {
+      background: rgba(22,32,42,0.75);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 16px 16px;
+      transition: transform var(--med) var(--ease), background var(--med) var(--ease), border-color var(--med) var(--ease);
+      overflow: hidden;
+    }
+    .subcard:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.12);
+      background: rgba(22,32,42,0.82);
+    }
+
+    .subcard h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      color: rgba(255,255,255,0.85);
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      margin-right: 8px;
+      margin-bottom: 8px;
+      transition: transform var(--fast) var(--ease), background var(--fast) var(--ease);
+    }
+    .tag:hover { transform: translateY(-1px); background: rgba(255,255,255,0.06); }
+
+    .callout {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 14px;
+      margin: 14px 0 16px;
+      background: rgba(255,255,255,0.04);
+      transition: transform var(--med) var(--ease), border-color var(--med) var(--ease);
+    }
+    .callout:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.16); }
+    .callout.good { background: var(--good); }
+    .callout.warn { background: var(--warn); }
+    .callout.info { background: var(--info); }
+    .callout.bad  { background: var(--bad); }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .callout span {
+      color: rgba(255,255,255,0.82);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    /* Timeline table */
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      background: rgba(22,32,42,0.6);
+      max-width: 100%;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+    th, td {
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+      color: rgba(255,255,255,0.86);
+    }
+    th {
+      font-size: 12px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.03);
+      position: sticky;
+      top: 0;
+    }
+    td em { color: rgba(255,255,255,0.68); }
+
+    /* FAQ controls */
+    .faq-controls {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin: 12px 0 10px;
+      align-items: center;
+    }
+
+    .search {
+      flex: 1 1 260px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--accent);
+      outline: none;
+      font-size: 14px;
+      transition: border-color var(--fast) var(--ease), background var(--fast) var(--ease);
+    }
+    .search input:focus {
+      border-color: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.06);
+    }
+    .search input::placeholder { color: rgba(255,255,255,0.45); }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .text-action {
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    /* Accordion */
+    .accordion {
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(22,32,42,0.55);
+    }
+
+    .acc-item + .acc-item { border-top: 1px solid rgba(255,255,255,0.06); }
+
+    .acc-btn {
+      width: 100%;
+      text-align: left;
+      padding: 14px 14px;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.92);
+      cursor: pointer;
+      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      transition: background var(--fast) var(--ease);
+    }
+    .acc-btn:hover { background: rgba(255,255,255,0.04); }
+
+    .acc-btn .q {
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      transition: color var(--fast) var(--ease), text-decoration-color var(--fast) var(--ease);
+    }
+
+    /* Underline ONLY when toggled open */
+    .acc-item.open .acc-btn .q {
+      text-decoration: underline;
+      text-decoration-color: rgba(255,255,255,0.95);
+      text-underline-offset: 6px;
+    }
+
+    .acc-btn .icon {
+      color: rgba(255,255,255,0.65);
+      font-size: 18px;
+      line-height: 1;
+      flex: 0 0 auto;
+      transition: transform var(--med) var(--ease), color var(--med) var(--ease);
+    }
+
+    .acc-panel {
+      height: 0;
+      overflow: hidden;
+      padding: 0 14px;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.7;
+      font-size: 15px;
+      transition: height var(--med) var(--ease), padding var(--med) var(--ease);
+      will-change: height;
+    }
+    .acc-panel-inner { padding-top: 10px; }
+    .acc-panel p { margin: 0; color: rgba(255,255,255,0.78); font-size: 15px; }
+    .acc-panel ul { margin: 10px 0 0; color: rgba(255,255,255,0.78); font-size: 15px; }
+
+    .acc-item.open .acc-panel { padding: 0 14px 14px; }
+    .acc-item.open .acc-btn .icon { transform: rotate(45deg); color: rgba(255,255,255,0.85); }
+
+    .footer-note {
+      margin-top: 18px;
+      color: rgba(255,255,255,0.65);
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .card, .hero, section { animation: none !important; }
+      .subcard { transition: none !important; }
+      .acc-panel { transition: none !important; }
+      .drawer-panel { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress" id="progressBar" aria-hidden="true"></div>
+
+  <header>
+    <div class="logo"><a href="index.html">MENTURA</a></div>
+
+    <a class="nav-toggle-link" href="#" onclick="toggleDrawer(); return false;" aria-label="Open menu">Menu</a>
+
+    <nav aria-label="Primary navigation">
+      <a href="speak-to-ug.html">UG Students</a>
+      <a href="speak-to-da.html">Degree Apprentices</a>
+      <a href="interns.html">Interns</a>
+      <a href="ps-help.html">UG Help</a>
+      <a class="current" href="da-help.html">DA Help</a>
+      <a href="tutor.html">Tutoring Services</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <!-- Mobile drawer -->
+  <div class="mobile-drawer" id="mobileDrawer" onclick="drawerBackdropClick(event)">
+    <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="drawer-head">
+        <div class="drawer-title">Navigation</div>
+        <a class="drawer-close" href="#" onclick="toggleDrawer(); return false;">Close</a>
+      </div>
+
+      <div class="drawer-links">
+        <a href="speak-to-ug.html">UG Students</a>
+        <a href="speak-to-da.html">Degree Apprentices</a>
+        <a href="interns.html">Interns</a>
+        <a href="ps-help.html">UG Help</a>
+        <a class="current" href="da-help.html">DA Help</a>
+        <a href="tutor.html">Tutoring Services</a>
+        <a href="about.html">About</a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="hero">
+      <h1>Degree Apprenticeship Hub</h1>
+
+      <p class="subtitle">
+        This is your “one stop” guide for degree apprenticeships — what they are, who they’re for, how to find vacancies, how to apply like a pro, and what to do if you don’t get one first time.
+      </p>
+
+      <p class="hero-help">
+        If you still need more guidance, <a class="u-link" href="speak-to-da.html">speak to a degree apprentice</a>.
+      </p>
+
+      <div class="quick-links" aria-label="Quick links">
+        <a class="u-link" href="#start">Start here</a>
+        <a class="u-link" href="#fit">Is it right for you?</a>
+        <a class="u-link" href="#find">Finding vacancies</a>
+        <a class="u-link" href="#timeline">Timeline</a>
+        <a class="u-link" href="#apply">Applications</a>
+        <a class="u-link" href="#cv">CV & cover letter</a>
+        <a class="u-link" href="#assess">Tests & assessment centres</a>
+        <a class="u-link" href="#interviews">Interviews</a>
+        <a class="u-link" href="#offers">Offers & onboarding</a>
+        <a class="u-link" href="#study">Work + study</a>
+        <a class="u-link" href="#faq">FAQ</a>
+      </div>
+    </div>
+
+    <div class="page">
+      <aside class="sidebar">
+        <div class="card">
+          <p class="toc-title">On this page</p>
+
+          <div class="toc-scroll" aria-label="On this page navigation">
+            <ul class="toc" id="tocList">
+              <li><a href="#start">Start here: what a DA actually is</a></li>
+              <li><a href="#fit">Is a DA right for you?</a></li>
+              <li><a href="#requirements">Eligibility & entry requirements</a></li>
+              <li><a href="#find">Where to find vacancies</a></li>
+              <li><a href="#timeline">A realistic timeline (rolling)</a></li>
+              <li><a href="#apply">Applications: how it works</a></li>
+              <li><a href="#cv">CV & cover letter (that wins)</a></li>
+              <li><a href="#assess">Online tests & assessment centres</a></li>
+              <li><a href="#interviews">Interviews: what they look for</a></li>
+              <li><a href="#offers">Offers, contracts, start dates</a></li>
+              <li><a href="#study">Balancing work + study</a></li>
+              <li><a href="#backup">If you don’t get one (Plan B)</a></li>
+              <li><a href="#faq">FAQ (searchable)</a></li>
+            </ul>
+          </div>
+
+          <p class="footer-note">
+            Tip: Degree apprenticeships are job applications. Deadlines, stages, and requirements vary by employer — always trust the vacancy listing first.
+          </p>
+
+          <p class="footer-note" style="margin-top:12px;">
+            <a class="u-link" href="#" onclick="scrollToTop(); return false;">Back to top</a>
+          </p>
+        </div>
+      </aside>
+
+      <div>
+        <div class="card">
+
+          <!-- START -->
+          <section id="start">
+            <div class="section-title">
+              <h2>Start here: what a degree apprenticeship actually is</h2>
+              <span class="hint">big picture</span>
+            </div>
+
+            <p>
+              A degree apprenticeship is a paid job where you work for an employer and study part-time towards a university degree.
+              You’re “earning while learning” — building real experience while gaining a recognised qualification.
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>What you get (the upside)</h3>
+                <ul>
+                  <li><strong>Salary</strong> (you’re employed, not a full-time student).</li>
+                  <li><strong>Degree</strong> (typically Level 6 or Level 7, depending on the programme).</li>
+                  <li><strong>No traditional tuition-fee bill</strong> for you personally (funded through apprenticeship funding routes).</li>
+                  <li><strong>Experience + network</strong> (you graduate with years of real work on your CV).</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>What to be honest about (the trade-offs)</h3>
+                <ul>
+                  <li>It can be <strong>very competitive</strong> (like graduate schemes).</li>
+                  <li>You’ll juggle <strong>deadlines + work + study</strong>.</li>
+                  <li>You won’t always get the “traditional uni lifestyle”.</li>
+                  <li>Some roles are <strong>location-specific</strong> and may involve commuting.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout info">
+              <strong>Mentura mindset</strong>
+              <span>
+                Treat your degree apprenticeship search like a structured project: shortlist roles, build evidence, tailor applications, practise tests/interviews, then iterate fast.
+              </span>
+            </div>
+          </section>
+
+          <!-- FIT -->
+          <section id="fit">
+            <div class="section-title">
+              <h2>Is a degree apprenticeship right for you?</h2>
+              <span class="hint">decision</span>
+            </div>
+
+            <p>
+              If you like learning by doing, want to start your career early, and can handle responsibility, a DA can be perfect.
+              If you want a fully flexible academic route with lots of free time, traditional uni may fit better.
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>You’ll probably love a DA if…</h3>
+                <ul>
+                  <li>You want a <strong>clear career path</strong> (business, tech, engineering, finance, healthcare, etc.).</li>
+                  <li>You’re motivated by <strong>real work</strong> and building skills fast.</li>
+                  <li>You’re happy being assessed in the workplace (performance matters).</li>
+                  <li>You can plan your week and stick to routines.</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>Traditional uni might suit you if…</h3>
+                <ul>
+                  <li>You want deep academic exploration before choosing a career.</li>
+                  <li>You want more freedom over your schedule.</li>
+                  <li>You’re aiming for courses that rarely offer DAs (varies by field).</li>
+                  <li>You want the full campus experience (societies, halls, etc.).</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout good">
+              <strong>Best of both worlds</strong>
+              <span>
+                You can apply to degree apprenticeships and university at the same time. Keep options open until you have real offers.
+              </span>
+            </div>
+          </section>
+
+          <!-- REQUIREMENTS -->
+          <section id="requirements">
+            <div class="section-title">
+              <h2>Eligibility & entry requirements (what employers typically check)</h2>
+              <span class="hint">requirements</span>
+            </div>
+
+            <p>
+              Every vacancy is different. Employers usually list required GCSEs/A-levels (or equivalents), plus any subject requirements.
+              They also care a lot about your mindset and skills — not just grades.
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>Common requirements</h3>
+                <ul>
+                  <li>GCSEs (often including <strong>English + Maths</strong>).</li>
+                  <li>A-levels / BTEC / T Levels (or equivalent).</li>
+                  <li>Right to work in the UK (role-dependent).</li>
+                  <li>Sometimes: a driving licence / ability to travel.</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>What really separates candidates</h3>
+                <ul>
+                  <li>Clear motivation: <strong>why this role + why this employer</strong>.</li>
+                  <li>Evidence: projects, part-time work, volunteering, responsibilities.</li>
+                  <li>Professional habits: punctuality, communication, reliability.</li>
+                  <li>Learning attitude: curiosity + feedback + improvement.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout warn">
+              <strong>Reality check</strong>
+              <span>
+                Don’t self-reject too early. If you’re close to requirements, apply — but be strategic and apply widely.
+              </span>
+            </div>
+          </section>
+
+          <!-- FIND -->
+          <section id="find">
+            <div class="section-title">
+              <h2>Where to find degree apprenticeship vacancies</h2>
+              <span class="hint">search</span>
+            </div>
+
+            <p>
+              Degree apprenticeships are advertised throughout the year, and there’s no single UCAS-style cycle.
+              Your job is to build a shortlist of employers and check regularly.
+            </p>
+
+            <div class="subcard">
+              <h3>High-signal places to look</h3>
+              <div style="margin-bottom:10px;">
+                <span class="tag">Employer careers pages</span>
+                <span class="tag">Apprenticeships.gov.uk</span>
+                <span class="tag">UCAS apprenticeship search</span>
+                <span class="tag">LinkedIn</span>
+                <span class="tag">School/college careers team</span>
+                <span class="tag">Events & insight days</span>
+              </div>
+              <ul>
+                <li><strong>Employer websites</strong> (best for early openings and accurate requirements).</li>
+                <li><strong>Government apprenticeship site</strong> for wide coverage and filters.</li>
+                <li><strong>UCAS apprenticeship tools</strong> if you want one place to browse and save.</li>
+                <li><strong>Networking</strong>: teachers, alumni, open events, career fairs.</li>
+              </ul>
+            </div>
+
+            <div class="callout info">
+              <strong>Mentura shortcut</strong>
+              <span>
+                Build a “Top 20 employer list” and check it weekly. Most students lose because they search randomly and start too late.
+              </span>
+            </div>
+          </section>
+
+          <!-- TIMELINE -->
+          <section id="timeline">
+            <div class="section-title">
+              <h2>A realistic timeline (degree apprenticeships are rolling)</h2>
+              <span class="hint">planning</span>
+            </div>
+
+            <div class="callout warn">
+              <strong>Important</strong>
+              <span>
+                Some employers open applications very early and close as soon as they fill places. Treat early prep as non-negotiable.
+              </span>
+            </div>
+
+            <p>
+              Use this as a practical planning template. Adjust to your target employers and their deadlines.
+            </p>
+
+            <div class="table-wrap">
+              <table aria-label="Degree apprenticeship planning timeline">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>What you do</th>
+                    <th>What you produce</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Research (4–8 weeks)</td>
+                    <td>Pick industries + roles; shortlist employers; understand entry routes</td>
+                    <td>Target list + role notes + 1-line “why” for each</td>
+                  </tr>
+                  <tr>
+                    <td>Evidence-building (ongoing)</td>
+                    <td>Projects, online learning, work experience, volunteering, responsibilities</td>
+                    <td>STAR stories + portfolio links + reflection notes</td>
+                  </tr>
+                  <tr>
+                    <td>Application sprint (2–10 weeks)</td>
+                    <td>Apply widely; tailor answers; track deadlines</td>
+                    <td>CV + cover letter + application tracker</td>
+                  </tr>
+                  <tr>
+                    <td>Online tests (1–3 weeks)</td>
+                    <td>Numerical/verbal/SJT; practise timed conditions</td>
+                    <td>Practice log + weak-area plan</td>
+                  </tr>
+                  <tr>
+                    <td>Assessment centre / interview</td>
+                    <td>Group tasks, presentations, interviews, strengths questions</td>
+                    <td>Prepared examples + employer research + questions</td>
+                  </tr>
+                  <tr>
+                    <td>Offer + onboarding</td>
+                    <td>Confirm start date, checks, documents, planning travel</td>
+                    <td>Clear plan for study time + commute + finances</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="callout good">
+              <strong>Simple rule</strong>
+              <span>
+                Apply early, apply widely, and keep improving your next application based on what you learn from the last one.
+              </span>
+            </div>
+          </section>
+
+          <!-- APPLY -->
+          <section id="apply">
+            <div class="section-title">
+              <h2>Applications: how the process usually works</h2>
+              <span class="hint">process</span>
+            </div>
+
+            <p>
+              Think “job application pipeline”. Most programmes look like: application form → online tests → interview/assessment centre → offer.
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>Typical stages</h3>
+                <ul>
+                  <li>Online application (CV + questions)</li>
+                  <li>Online tests (SJT / numerical / verbal)</li>
+                  <li>Phone/video screening</li>
+                  <li>Assessment centre (group task / presentation)</li>
+                  <li>Final interview</li>
+                  <li>Offer + checks</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>Common mistakes</h3>
+                <ul>
+                  <li>Generic answers (no employer research)</li>
+                  <li>Applying late (roles fill fast)</li>
+                  <li>No evidence (claims without examples)</li>
+                  <li>Not practising timed tests</li>
+                  <li>Messy tracking (missed deadlines/emails)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout info">
+              <strong>Application tracker (do this)</strong>
+              <span>
+                Make a simple spreadsheet: employer, role, link, deadline, stage, notes, next action. This alone puts you ahead of most applicants.
+              </span>
+            </div>
+          </section>
+
+          <!-- CV -->
+          <section id="cv">
+            <div class="section-title">
+              <h2>CV & cover letter (the version that actually wins)</h2>
+              <span class="hint">writing</span>
+            </div>
+
+            <p>
+              Your CV is proof. Your cover letter is your logic. Together they answer:
+              “Can you do the job?” and “Do you genuinely want this job here?”
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>CV essentials</h3>
+                <ul>
+                  <li>One clean page (two max if truly needed)</li>
+                  <li>Education + predicted grades (if applicable)</li>
+                  <li>Experience (part-time, volunteering, caring counts)</li>
+                  <li>Projects (especially for tech/engineering/business)</li>
+                  <li>Skills backed by evidence (not buzzwords)</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>Cover letter structure</h3>
+                <ul>
+                  <li><strong>Why this employer</strong> (specific)</li>
+                  <li><strong>Why this role</strong> (skills match)</li>
+                  <li><strong>Evidence</strong> (2–3 strong examples)</li>
+                  <li><strong>Close</strong> (enthusiasm + availability)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout warn">
+              <strong>Golden rule</strong>
+              <span>
+                Don’t say “I’m a strong communicator” — show it with a quick example where you communicated under pressure, solved a problem, or led something.
+              </span>
+            </div>
+          </section>
+
+          <!-- ASSESS -->
+          <section id="assess">
+            <div class="section-title">
+              <h2>Online tests & assessment centres: what to expect</h2>
+              <span class="hint">selection</span>
+            </div>
+
+            <p>
+              Many employers use tests to filter fairly at scale. This is normal. You can improve a lot with practice.
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>Common online tests</h3>
+                <ul>
+                  <li><strong>Situational judgement</strong> (best response / worst response)</li>
+                  <li><strong>Numerical reasoning</strong> (data tables, graphs, percentages)</li>
+                  <li><strong>Verbal reasoning</strong> (accuracy + speed)</li>
+                  <li><strong>Strengths / values</strong> questionnaires</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>Assessment centre activities</h3>
+                <ul>
+                  <li>Group task (collaboration + structure)</li>
+                  <li>Presentation (clarity + confidence)</li>
+                  <li>In-tray / case study (prioritisation)</li>
+                  <li>Interview (competency + motivation)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout good">
+              <strong>How to practise (fast improvement)</strong>
+              <span>
+                Do timed practice, review mistakes, repeat. Most people only “do a test” once — winners do cycles and track weak areas.
+              </span>
+            </div>
+          </section>
+
+          <!-- INTERVIEWS -->
+          <section id="interviews">
+            <div class="section-title">
+              <h2>Interviews: what they look for (and how to answer)</h2>
+              <span class="hint">performance</span>
+            </div>
+
+            <p>
+              Interviewers want someone who will show up, learn fast, and represent the company well.
+              Your job is to be specific, calm, and evidence-led.
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>Questions you’ll likely get</h3>
+                <ul>
+                  <li>Why this apprenticeship (not uni, not later)?</li>
+                  <li>Why this employer (what do they do, what are their values)?</li>
+                  <li>Tell me about a time you overcame a challenge</li>
+                  <li>Teamwork / conflict / leadership examples</li>
+                  <li>What have you done to explore this industry?</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>Answer method (simple)</h3>
+                <ul>
+                  <li><strong>STAR</strong>: Situation, Task, Action, Result</li>
+                  <li>Add a final line: <strong>what you learned</strong></li>
+                  <li>Quantify results when you can</li>
+                  <li>Keep it tight: 60–90 seconds per story</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout info">
+              <strong>One skill that changes everything</strong>
+              <span>
+                Speak your thinking out loud. Employers love candidates who can explain decisions clearly, especially under pressure.
+              </span>
+            </div>
+          </section>
+
+          <!-- OFFERS -->
+          <section id="offers">
+            <div class="section-title">
+              <h2>Offers, contracts, and what happens next</h2>
+              <span class="hint">after</span>
+            </div>
+
+            <p>
+              If you get an offer, expect admin steps: checks, documents, and planning your start.
+              Treat onboarding like your first professional project.
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>What to check in your offer</h3>
+                <ul>
+                  <li>Start date + location</li>
+                  <li>Salary + progression</li>
+                  <li>Study schedule (day release / block release)</li>
+                  <li>Probation period</li>
+                  <li>Any relocation / travel expectations</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>What you should do immediately</h3>
+                <ul>
+                  <li>Plan commute + backup travel options</li>
+                  <li>Sort documents (ID, right-to-work, bank details)</li>
+                  <li>Set a weekly routine for study time</li>
+                  <li>Message your manager with a simple intro</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout warn">
+              <strong>If you’re choosing between offers</strong>
+              <span>
+                Don’t just choose the biggest brand. Compare role fit, support, study structure, and long-term progression.
+              </span>
+            </div>
+          </section>
+
+          <!-- STUDY -->
+          <section id="study">
+            <div class="section-title">
+              <h2>Balancing work + study (how to not burn out)</h2>
+              <span class="hint">real life</span>
+            </div>
+
+            <p>
+              The biggest challenge isn’t intelligence — it’s energy and organisation.
+              If you master planning, you’ll thrive.
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>Weekly rhythm that works</h3>
+                <ul>
+                  <li>Block study time like meetings (non-negotiable)</li>
+                  <li>Do small sessions daily (30–60 mins beats 5 hours once)</li>
+                  <li>Prep your week on Sunday (15 minutes)</li>
+                  <li>Track deadlines in one place</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>Professional habits that help</h3>
+                <ul>
+                  <li>Ask questions early (don’t hide confusion)</li>
+                  <li>Take notes, then summarise actions</li>
+                  <li>Communicate workload honestly</li>
+                  <li>Protect sleep (it’s performance)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout good">
+              <strong>Simple reality</strong>
+              <span>
+                Most apprentices who struggle aren’t “not good enough” — they’re under-planned. Fix the system and you fix the outcome.
+              </span>
+            </div>
+          </section>
+
+          <!-- PLAN B -->
+          <section id="backup">
+            <div class="section-title">
+              <h2>If you don’t get one (Plan B that still wins)</h2>
+              <span class="hint">bounce back</span>
+            </div>
+
+            <p>
+              Rejection is normal. The winning move is to keep momentum and upgrade your profile for the next cycle.
+            </p>
+
+            <div class="grid-2">
+              <div class="subcard">
+                <h3>Fast wins</h3>
+                <ul>
+                  <li>Improve CV: tighter bullets + stronger evidence</li>
+                  <li>Practice tests weekly</li>
+                  <li>Get one more relevant project/certification</li>
+                  <li>Build STAR examples from real responsibilities</li>
+                </ul>
+              </div>
+
+              <div class="subcard">
+                <h3>Strong alternative routes</h3>
+                <ul>
+                  <li>Traditional uni + apply again (with better evidence)</li>
+                  <li>Higher apprenticeship route into a degree apprenticeship</li>
+                  <li>Entry-level job in the industry + reapply</li>
+                  <li>Gap year: work + build a portfolio + apply early</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout info">
+              <strong>Mentura rule</strong>
+              <span>
+                If you didn’t get offers, it’s usually one of four things: not enough applications, weak tailoring, weak tests prep, or weak evidence. Fix the bottleneck.
+              </span>
+            </div>
+          </section>
+
+          <!-- FAQ -->
+          <section id="faq">
+            <div class="section-title">
+              <h2>FAQ (searchable)</h2>
+              <span class="hint">answers</span>
+            </div>
+
+            <div class="faq-controls">
+              <div class="search">
+                <input id="faqSearch" type="text" placeholder="Search questions… (e.g., “salary”, “tests”, “CV”, “uni at same time”)"
+                       oninput="filterFaq()" />
+              </div>
+
+              <div class="actions" aria-label="FAQ actions">
+                <a class="text-action" href="#" onclick="openAllFaq(); return false;">Open all</a>
+                <a class="text-action" href="#" onclick="closeAllFaq(); return false;">Close all</a>
+                <a class="text-action" href="#" onclick="clearFaqSearch(); return false;">Clear search</a>
+              </div>
+            </div>
+
+            <div class="accordion" id="faqAccordion">
+              <div class="acc-item">
+                <button class="acc-btn" type="button">
+                  <span class="q">Do I apply through UCAS?</span>
+                  <span class="icon">+</span>
+                </button>
+                <div class="acc-panel"><div class="acc-panel-inner">
+                  <p>
+                    Usually no — most degree apprenticeships are applied for like jobs (employer application forms). UCAS can still help you explore and search opportunities, but the employer vacancy page is the source of truth.
+                  </p>
+                </div></div>
+              </div>
+
+              <div class="acc-item">
+                <button class="acc-btn" type="button">
+                  <span class="q">Can I apply to university and degree apprenticeships at the same time?</span>
+                  <span class="icon">+</span>
+                </button>
+                <div class="acc-panel"><div class="acc-panel-inner">
+                  <p>
+                    Yes. Keeping both routes open is smart, especially because DA timelines vary and competition is high.
+                  </p>
+                </div></div>
+              </div>
+
+              <div class="acc-item">
+                <button class="acc-btn" type="button">
+                  <span class="q">Do I need amazing grades?</span>
+                  <span class="icon">+</span>
+                </button>
+                <div class="acc-panel"><div class="acc-panel-inner">
+                  <p>
+                    Requirements vary by role. Many employers look for a mix of grades and skills. Strong evidence, motivation, and performance in tests/interviews can make a big difference.
+                  </p>
+                </div></div>
+              </div>
+
+              <div class="acc-item">
+                <button class="acc-btn" type="button">
+                  <span class="q">What if I have little or no experience?</span>
+                  <span class="icon">+</span>
+                </button>
+                <div class="acc-panel"><div class="acc-panel-inner">
+                  <p>
+                    Build “evidence instead”: projects, volunteering, responsibilities at home/school, online learning, part-time work. Then turn them into strong STAR stories.
+                  </p>
+                </div></div>
+              </div>
+
+              <div class="acc-item">
+                <button class="acc-btn" type="button">
+                  <span class="q">What are online tests like?</span>
+                  <span class="icon">+</span>
+                </button>
+                <div class="acc-panel"><div class="acc-panel-inner">
+                  <p>
+                    Often timed and designed to assess judgement, reasoning, and how you handle information. The easiest way to improve is timed practice + reviewing mistakes.
+                  </p>
+                </div></div>
+              </div>
+
+              <div class="acc-item">
+                <button class="acc-btn" type="button">
+                  <span class="q">What should I say for “Why this company?”</span>
+                  <span class="icon">+</span>
+                </button>
+                <div class="acc-panel"><div class="acc-panel-inner">
+                  <ul>
+                    <li>Reference something real: their work, values, projects, clients, products.</li>
+                    <li>Link it to you: what interests you and why you’d learn well there.</li>
+                    <li>Close with fit: how your skills match the role.</li>
+                  </ul>
+                </div></div>
+              </div>
+
+              <div class="acc-item">
+                <button class="acc-btn" type="button">
+                  <span class="q">How many should I apply to?</span>
+                  <span class="icon">+</span>
+                </button>
+                <div class="acc-panel"><div class="acc-panel-inner">
+                  <p>
+                    More than you think. Competition is high, so treat it like a numbers + quality game: apply widely, but tailor the key answers.
+                  </p>
+                </div></div>
+              </div>
+
+              <div class="acc-item">
+                <button class="acc-btn" type="button">
+                  <span class="q">What if I get rejected?</span>
+                  <span class="icon">+</span>
+                </button>
+                <div class="acc-panel"><div class="acc-panel-inner">
+                  <p>
+                    Keep moving. Upgrade your CV, practise tests, build one more strong project, and apply earlier next time. Rejection is normal — quitting is optional.
+                  </p>
+                </div></div>
+              </div>
+            </div>
+
+            <p class="footer-note">
+              If you still need more guidance, <a class="u-link" href="speak-to-da.html">speak to a degree apprentice</a>.
+            </p>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function toggleDrawer() {
+      const drawer = document.getElementById("mobileDrawer");
+      drawer.classList.toggle("open");
+    }
+    function drawerBackdropClick(e) {
+      if (e.target && e.target.id === "mobileDrawer") toggleDrawer();
+    }
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        const drawer = document.getElementById("mobileDrawer");
+        if (drawer.classList.contains("open")) drawer.classList.remove("open");
+      }
+    });
+
+    // Scroll progress
+    const progressBar = document.getElementById("progressBar");
+    function updateProgress() {
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const scrollHeight = doc.scrollHeight - doc.clientHeight;
+      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      progressBar.style.width = progress + "%";
+    }
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+
+    // Accordion behavior (smooth height transitions)
+    const accordion = document.getElementById("faqAccordion");
+    const items = Array.from(accordion.querySelectorAll(".acc-item"));
+
+    function setPanelHeight(item, open) {
+      const panel = item.querySelector(".acc-panel");
+      if (!panel) return;
+
+      if (open) {
+        panel.style.height = panel.scrollHeight + "px";
+        item.classList.add("open");
+      } else {
+        panel.style.height = panel.scrollHeight + "px";
+        requestAnimationFrame(() => {
+          panel.style.height = "0px";
+          item.classList.remove("open");
+        });
+      }
+    }
+
+    function toggleItem(item) {
+      const isOpen = item.classList.contains("open");
+      setPanelHeight(item, !isOpen);
+    }
+
+    items.forEach(item => {
+      const btn = item.querySelector(".acc-btn");
+      btn.addEventListener("click", () => toggleItem(item));
+    });
+
+    function openAllFaq() { items.forEach(i => setPanelHeight(i, true)); }
+    function closeAllFaq() { items.forEach(i => setPanelHeight(i, false)); }
+
+    window.addEventListener("resize", () => {
+      items.forEach(i => {
+        const panel = i.querySelector(".acc-panel");
+        if (i.classList.contains("open") && panel) {
+          panel.style.height = panel.scrollHeight + "px";
+        }
+      });
+    });
+
+    // Search / filter FAQ
+    function filterFaq() {
+      const q = document.getElementById("faqSearch").value.trim().toLowerCase();
+      items.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        const match = text.includes(q);
+        item.style.display = match ? "" : "none";
+        if (q && match) setPanelHeight(item, true);
+        if (!q) setPanelHeight(item, false);
+      });
+    }
+
+    function clearFaqSearch() {
+      const input = document.getElementById("faqSearch");
+      input.value = "";
+      items.forEach(item => {
+        item.style.display = "";
+        setPanelHeight(item, false);
+      });
+      input.focus();
+    }
+
+    // Active section highlight in TOC
+    const tocLinks = Array.from(document.querySelectorAll("#tocList a"));
+    const sections = tocLinks
+      .map(a => document.querySelector(a.getAttribute("href")))
+      .filter(Boolean);
+
+    const obs = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter(e => e.isIntersecting)
+        .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (!visible) return;
+      const id = visible.target.id;
+      tocLinks.forEach(a => {
+        const href = a.getAttribute("href");
+        a.classList.toggle("active", href === "#" + id);
+      });
+    }, { root: null, threshold: [0.12, 0.2, 0.35, 0.5] });
+
+    sections.forEach(sec => obs.observe(sec));
+  </script>
+
+</body>
+</html>
+```
+
+
+
+
