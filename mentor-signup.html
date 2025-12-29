@@ -92,12 +92,19 @@
       filter: brightness(0.9);
     }
 
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+    }
+
     .success-message, .error-message {
       display: none;
       margin-top: 20px;
       padding: 14px;
       border-radius: 6px;
       font-size: 16px;
+      line-height: 1.4;
     }
 
     .success-message {
@@ -122,6 +129,8 @@
     }
     a.back:hover { color: #fff; }
 
+    /* Hidden honeypot field */
+    .hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   </style>
 </head>
 
@@ -131,22 +140,52 @@
     <h1>Become a Mentor</h1>
     <p class="subtitle">Help students by sharing your real experiences.</p>
 
-    <form id="mentorForm">
+    <form id="mentorForm" action="https://formspree.io/f/xbdjwzbj" method="POST">
 
-      <label>What is your current position?</label>
-      <input type="text" name="position" placeholder="e.g., LSE Student, Amazon Degree Apprentice" required>
+      <!-- Honeypot (spam trap) -->
+      <div class="hp-field" aria-hidden="true">
+        <label for="company">Company</label>
+        <input id="company" name="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
 
-      <label>Why do you want to become a Mentor?</label>
-      <textarea name="why" placeholder="Tell us a little about your motivation..." required></textarea>
+      <label for="position">What is your current position?</label>
+      <input
+        id="position"
+        type="text"
+        name="position"
+        placeholder="e.g., LSE Student, Amazon Degree Apprentice"
+        required
+      >
 
-      <label>Are you free every two weeks for a 15-minute call?</label>
-      <select name="availability" required>
+      <label for="email">Email address</label>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      >
+
+      <label for="why">Why do you want to become a Mentor?</label>
+      <textarea
+        id="why"
+        name="why"
+        placeholder="Tell us a little about your motivation..."
+        required
+      ></textarea>
+
+      <label for="availability">Are you free every two weeks for a 15-minute call?</label>
+      <select id="availability" name="availability" required>
         <option value="">Select an option</option>
         <option value="Yes">Yes, I can commit</option>
         <option value="No">Not at the moment</option>
       </select>
 
-      <button type="submit">Submit Application</button>
+      <!-- Optional: sets subject line in email notification -->
+      <input type="hidden" name="_subject" value="New Mentor Application — Mentura">
+
+      <button id="submitBtn" type="submit">Submit Application</button>
 
       <div class="success-message" id="successMessage">
         Thank you! Your mentor application has been received. We will be in touch shortly.
@@ -161,41 +200,67 @@
   </div>
 
   <script>
-    document.getElementById("mentorForm").addEventListener("submit", async function(e) {
+    const form = document.getElementById("mentorForm");
+    const successEl = document.getElementById("successMessage");
+    const errorEl = document.getElementById("errorMessage");
+    const btn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", async function(e) {
       e.preventDefault();
 
-      const successEl = document.getElementById("successMessage");
-      const errorEl = document.getElementById("errorMessage");
       successEl.style.display = "none";
       errorEl.style.display = "none";
 
-      const formData = {
-        position: this.position.value,
-        why: this.why.value,
-        availability: this.availability.value
-      };
+      // If honeypot filled, silently pretend success (bots)
+      if (form.company && form.company.value) {
+        successEl.style.display = "block";
+        form.reset();
+        return;
+      }
+
+      if (!form.availability.value) {
+        errorEl.textContent = "Please select your availability before submitting.";
+        errorEl.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Submitting...";
 
       try {
-        const res = await fetch("http://localhost:3000/mentor-signup", {
+        const formData = new FormData(form);
+
+        const res = await fetch(form.action, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(formData)
+          body: formData,
+          headers: { "Accept": "application/json" }
         });
 
         if (res.ok) {
           successEl.style.display = "block";
-          this.reset();
+          form.reset();
         } else {
+          let data = null;
+          try { data = await res.json(); } catch (_) {}
+
+          errorEl.textContent =
+            (data && data.errors && data.errors[0] && data.errors[0].message)
+              ? data.errors[0].message
+              : "Something went wrong. Please try again in a moment.";
+
           errorEl.style.display = "block";
         }
       } catch (err) {
         console.error(err);
+        errorEl.textContent = "Network error. Please check your connection and try again.";
         errorEl.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Submit Application";
       }
     });
   </script>
 
 </body>
 </html>
+
