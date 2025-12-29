@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Become a Mentor • Mentura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #111827;
+      --card-dark: #1f2933;
+      --accent: #ffffff;
+      --accent-muted: #9ca3af;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--accent);
+      font-family: "Inter", sans-serif;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      background: var(--card-dark);
+      padding: 40px 30px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+    }
+
+    h1 {
+      font-size: 34px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    p.subtitle {
+      text-align: center;
+      font-size: 17px;
+      color: var(--accent-muted);
+      margin-bottom: 35px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #0f172a;
+      color: var(--accent);
+      font-size: 16px;
+      margin-bottom: 22px;
+      outline: none;
+    }
+
+    textarea {
+      height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #ffffff;
+      color: #111827;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.25s;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      filter: brightness(0.9);
+    }
+
+    .success-message, .error-message {
+      display: none;
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .success-message {
+      background: #0f5132;
+      color: #d1fae5;
+      border-left: 4px solid #34d399;
+    }
+
+    .error-message {
+      background: #5c1a1a;
+      color: #fee2e2;
+      border-left: 4px solid #f87171;
+    }
+
+    a.back {
+      display: inline-block;
+      margin-top: 25px;
+      text-align: center;
+      width: 100%;
+      color: var(--accent-muted);
+      text-decoration: none;
+    }
+    a.back:hover { color: #fff; }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Become a Mentor</h1>
+    <p class="subtitle">Help students by sharing your real experiences.</p>
+
+    <form id="mentorForm">
+
+      <label>What is your current position?</label>
+      <input type="text" name="position" placeholder="e.g., LSE Student, Amazon Degree Apprentice" required>
+
+      <label>Why do you want to become a Mentor?</label>
+      <textarea name="why" placeholder="Tell us a little about your motivation..." required></textarea>
+
+      <label>Are you free every two weeks for a 15-minute call?</label>
+      <select name="availability" required>
+        <option value="">Select an option</option>
+        <option value="Yes">Yes, I can commit</option>
+        <option value="No">Not at the moment</option>
+      </select>
+
+      <button type="submit">Submit Application</button>
+
+      <div class="success-message" id="successMessage">
+        Thank you! Your mentor application has been received. We will be in touch shortly.
+      </div>
+
+      <div class="error-message" id="errorMessage">
+        Something went wrong. Please try again in a moment.
+      </div>
+    </form>
+
+    <a href="index.html" class="back">← Back to Home</a>
+  </div>
+
+  <script>
+    document.getElementById("mentorForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const successEl = document.getElementById("successMessage");
+      const errorEl = document.getElementById("errorMessage");
+      successEl.style.display = "none";
+      errorEl.style.display = "none";
+
+      const formData = {
+        position: this.position.value,
+        why: this.why.value,
+        availability: this.availability.value
+      };
+
+      try {
+        const res = await fetch("http://localhost:3000/mentor-signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (res.ok) {
+          successEl.style.display = "block";
+          this.reset();
+        } else {
+          errorEl.style.display = "block";
+        }
+      } catch (err) {
+        console.error(err);
+        errorEl.style.display = "block";
+      }
+    });
+  </script>
+
+</body>
+</html>
