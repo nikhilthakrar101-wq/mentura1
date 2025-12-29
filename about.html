@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Us • Mentura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg-dark: #111827;
+      --card-dark: #1f2933;
+      --accent: #ffffff;
+      --accent-muted: #9ca3af;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--accent);
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    /* NAV BAR */
+    header {
+      padding: 18px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Make logo clickable but keep exact look */
+    .logo a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    nav a {
+      margin-left: 22px;
+      color: var(--accent-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 14px;
+    }
+    nav a:hover { color: var(--accent); }
+
+    /* PAGE WIDTH */
+    main {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 26px;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--card-dark);
+      padding: 60px 50px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.45);
+    }
+
+    /* ANIMATIONS */
+    .slide-in-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      animation: slideLeft 1s ease forwards;
+    }
+
+    @keyframes slideLeft {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .slide-in-right {
+      opacity: 0;
+      transform: translateX(40px);
+      animation: slideRight 1s ease forwards;
+    }
+
+    @keyframes slideRight {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* TYPOGRAPHY */
+    h1 {
+      font-size: 34px;
+      margin-bottom: 18px;
+      color: var(--accent);
+    }
+
+    p {
+      color: var(--accent-muted);
+      font-size: 18px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">MENTURA</a></div>
+  <nav>
+    <a href="speak-to-ug.html">UG Students</a>
+    <a href="speak-to-da.html">Degree Apprentices</a>
+    <a href="interns.html">Interns</a>
+    <a href="ps-help.html">UG Help</a>
+    <a href="da-help.html">DA Help</a>
+    <a href="tutor.html">Tutoring Services</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="card">
+
+    <!-- TWO-COLUMN LAYOUT -->
+    <div style="
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+    ">
+
+      <!-- LEFT SIDE — TEXT -->
+      <div class="slide-in-left" style="flex: 1; min-width: 300px;">
+
+        <h1>About Mentura</h1>
+
+        <!-- ⭐ NEW HEADING SAME SIZE AS H1 -->
+        <h1>Why Mentura Was Started</h1>
+
+        <p>
+          Mentura was created with one mission: to make real, honest, student-to-student
+          guidance accessible to every student, regardless of background or connections.
+          Growing up, I was fortunate enough to have an older brother, someone who understood
+          my end goals and helped me every step of the way. Wanting to go into a lucrative field,
+          I always had questions which I bombarded him with, and I was so lucky to have an older
+          brother to ask these questions too. Fast forward a few years, it came to sixth form,
+          and I had someone there telling me how to standout in my applications, someone who
+          was brutually honest and gave me real advice, someone who had been through the process
+          of going to a top University. I was fortunate enough to get into The University of Warwick,
+          and I decided to start posting on a channel called CashFlowClub, all about educational videos
+          and a way for me to try help students whose shoes I was in not too long ago, receiving 100s of
+          messages asking for advice, I felt grateful but I understood that I can't give tailored advice
+          to everyone, and that is why Mentura was built. Mentura allows you to ask those burning questions
+          to people who are doing, what you want to do.
+        </p>
+
+        <h1>Why Mentura?</h1>
+
+        <p>
+          We connect you with real university students, degree apprentices, and interns
+          who understand your journey because they’ve lived it. No generic or AI-generated advice,
+          only real experience, real insight, and real support. Sure, you can go to a networking event and get
+          two minutes with an Apprentice or Undergrad, or spend your whole evening cold messaging people on
+          LinkedIn for zero replies. We are cutting this out - for good.
+        </p>
+
+        <h1>Our Mission</h1>
+
+        <p>
+          Our goal is simple:
+          <strong>Make opportunity accessible.</strong>
+        </p>
+      </div>
+
+      <!-- RIGHT SIDE — IMAGE -->
+      <div style="flex: 1; min-width: 300px;">
+        <img src="images/about1.jpg"
+             alt="About Mentura"
+             class="slide-in-right"
+             style="
+               width: 100%;
+               border-radius: 0;
+               box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+             ">
+      </div>
+
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
+
+
+
+
+
