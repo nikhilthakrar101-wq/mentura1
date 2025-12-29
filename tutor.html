@@ -1,0 +1,541 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutoring Services • Mentura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root{
+      --bg-dark:#111827;
+      --card-dark:#1f2933;
+      --accent:#ffffff;
+      --accent-muted:#9ca3af;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      background:var(--bg-dark);
+      color:var(--accent);
+      margin:0;
+      font-family:"Segoe UI", Arial, sans-serif;
+    }
+
+    /* NAV */
+    header{
+      padding:18px 28px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .logo{
+      text-transform:uppercase;
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:.08em;
+    }
+    .logo a{ text-decoration:none; color:var(--accent); }
+
+    nav{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:18px;
+    }
+
+    nav a{
+      text-decoration:none;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--accent-muted);
+      font-size:14px;
+      white-space:nowrap;
+      cursor:pointer;
+      position:relative;
+      z-index:10;
+    }
+    nav a:hover{ color:var(--accent); }
+
+    /* MAIN */
+    main{
+      max-width:1200px;
+      margin:50px auto;
+      padding:0 22px 70px;
+      text-align:center;
+    }
+
+    /* TYPING */
+    .typing{
+      white-space:nowrap;
+      overflow:hidden;
+      border-right:2px solid var(--accent);
+      width:fit-content;
+      margin:0 auto;
+      animation:blink .8s infinite;
+      font-size:34px;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+    @keyframes blink{
+      0%{ border-right-color:rgba(255,255,255,1); }
+      50%{ border-right-color:rgba(255,255,255,0); }
+      100%{ border-right-color:rgba(255,255,255,1); }
+    }
+
+    .subtext{
+      margin-top:12px;
+      margin-bottom:24px;
+      font-size:17px;
+      color:var(--accent-muted);
+      max-width:860px;
+      margin-left:auto;
+      margin-right:auto;
+      line-height:1.55;
+    }
+    .subtext strong{ color:var(--accent); }
+
+    /* FADE */
+    @keyframes fadeUp{
+      from{ opacity:0; transform:translateY(14px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    /* SECTION HEADERS */
+    .section-block{
+      max-width:980px;
+      margin: 0 auto 14px;
+      opacity:0;
+      transform:translateY(14px);
+      animation:fadeUp .7s ease forwards;
+      text-align:center;
+    }
+
+    .section-title{
+      color:#ffffff;
+      text-transform:uppercase;
+      letter-spacing:.10em;
+      font-weight:800;
+      font-size:20px;
+      margin:0 0 10px;
+    }
+
+    .section-line{
+      color:#ffffff;
+      font-size:14px;
+      line-height:1.7;
+      max-width:900px;
+      margin:0 auto;
+    }
+
+    /* FEATURED ROW (ONE CARD CENTRED) */
+    .featured-row{
+      display:flex;
+      justify-content:center;
+      margin: 18px auto 28px;
+    }
+
+    /* JUNIOR HEADER */
+    .junior-header{
+      max-width:980px;
+      margin: 0 auto 14px;
+      opacity:0;
+      transform:translateY(14px);
+      animation:fadeUp .7s ease forwards;
+      animation-delay:.20s;
+      text-align:center;
+    }
+
+    /* GRID (3 PER ROW, TWO ROWS) */
+    .tutor-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+      text-align:left;
+      margin-top: 14px;
+      align-items: stretch; /* makes tiles stretch evenly */
+    }
+
+    @media (max-width: 980px){
+      .tutor-grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px){
+      .tutor-grid{ grid-template-columns: 1fr; }
+    }
+
+    /* CARD */
+    .tutor-tile{
+      background:transparent;
+      border:2px solid rgba(255,255,255,0.95);
+      width:100%;
+      max-width:320px;
+      justify-self:center;
+      transition:.18s ease;
+
+      /* ✅ force equal height across grid */
+      height: 520px;
+      display:flex;
+      flex-direction:column;
+
+      opacity:0;
+      transform:translateY(14px);
+      animation:fadeUp .7s ease forwards;
+    }
+
+    .tutor-tile:hover{
+      border-color:rgba(255,255,255,1);
+      transform:translateY(-2px);
+    }
+
+    /* Ravi standout but SAME SIZE */
+    .tutor-tile.featured{
+      border-color:rgba(255,255,255,1);
+      box-shadow:0 18px 42px rgba(0,0,0,0.55);
+    }
+
+    /* Stagger */
+    .featured{ animation-delay:.16s; }
+    .t1{ animation-delay:.26s; }
+    .t2{ animation-delay:.34s; }
+    .t3{ animation-delay:.42s; }
+    .t4{ animation-delay:.50s; }
+    .t5{ animation-delay:.58s; }
+    .t6{ animation-delay:.66s; }
+
+    /* IMAGE WRAPPER */
+    .tutor-img{
+      width:100%;
+      height:235px;
+      background:rgba(255,255,255,0.04);
+      overflow:hidden;
+      display:block;
+      flex: 0 0 auto;
+    }
+
+    /* MAKE IMAGES LOOK CLEARER (best possible via CSS) */
+    .tutor-img img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center 50%;
+      display:block;
+
+      image-rendering:auto;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      backface-visibility:hidden;
+      will-change: transform;
+
+      -webkit-filter: contrast(1.04) saturate(1.02);
+      filter: contrast(1.04) saturate(1.02);
+    }
+
+    @supports (-webkit-image-set(url("") 1x)) {
+      .tutor-img img{ image-rendering:-webkit-optimize-contrast; }
+    }
+
+    /* Crop fixes */
+    .tutor-img img.maanish-fix{ object-position:center 10%; }
+    .tutor-img img.shubhan-fix{ object-position:center 8%; }
+
+    /* ALL WORDS IN TUTOR BOX WHITE */
+    .tutor-info,
+    .tutor-info *{ color:#ffffff !important; }
+
+    .tutor-info{
+      padding:11px;
+      display:flex;
+      flex-direction:column;
+      flex: 1 1 auto;
+    }
+
+    .tutor-name{
+      font-weight:700;
+      font-size:13.8px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+
+    .tutor-study{
+      font-size:12.7px;
+      line-height:1.45;
+      margin-bottom:8px;
+    }
+
+    .tutor-desc{
+      font-size:13px;
+      line-height:1.6;
+      margin-bottom:10px;
+    }
+
+    /* ✅ keep button and final line pinned to bottom so all cards align */
+    .enquire-area{
+      margin-top:auto;
+    }
+
+    .enquire-btn{
+      width:100%;
+      padding:11px 10px;
+      background:var(--accent);
+      color:#111827 !important;
+      border:none;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      cursor:pointer;
+      transition:.18s ease;
+      display:block;
+      text-align:center;
+      text-decoration:none;
+      font-size:12.7px;
+    }
+    .enquire-btn:hover{ filter:brightness(.9); }
+
+    .after-enquire{
+      margin-top:10px;
+      font-size:12.5px;
+      line-height:1.55;
+      color:#ffffff !important;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">MENTURA</a></div>
+  <nav>
+    <a href="speak-to-ug.html">UG Students</a>
+    <a href="speak-to-da.html">Degree Apprentices</a>
+    <a href="interns.html">Interns</a>
+    <a href="ps-help.html">UG Help</a>
+    <a href="da-help.html">DA Help</a>
+    <a href="tutor.html">Tutoring Services</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main>
+
+  <div id="typing-main" class="typing"></div>
+
+  <div class="subtext">
+    Our tutors will help you build confidence, strengthen your understanding, and
+    <strong>get the results you want</strong> through structured lessons, targeted practice,
+    and exam focused technique. Browse tutors below and click <strong>Enquire Now</strong>.
+  </div>
+
+  <!-- Head Of Education -->
+  <div class="section-block" style="animation-delay:0.10s;">
+    <div class="section-title">Head Of Education</div>
+    <div class="section-line">
+     
+  </div>
+
+  <!-- Ravi centred at the top -->
+  <div class="featured-row">
+    <div class="tutor-tile featured">
+      <div class="tutor-img">
+        <img src="images/tutor-ravi.jpg" alt="Ravi Thakrar">
+      </div>
+      <div class="tutor-info">
+        <div class="tutor-name">Ravi Thakrar</div>
+        <div class="tutor-study">Studying MSc Mathematical Modelling at UCL. Previously studied Maths and Economics at LSE.</div>
+        <div class="tutor-desc">Teaches: Mathematics (GCSE and A level). A level results: A* Mathematics, A* Further Mathematics.</div>
+
+        <div class="enquire-area">
+          <a class="enquire-btn"
+             href="mailto:menturacontact@gmail.com?subject=Tutoring%20Enquiry%20Ravi%20Thakrar&body=Hi%20Mentura%2C%0A%0AI%27d%20like%20to%20enquire%20about%20tutoring%20with%20Ravi%20Thakrar.%0A%0ASubject%3A%0ALevel%20GCSE%20or%20A%20level%3A%0AExam%20board%20if%20known%3A%0ATopics%3A%0AAvailability%3A%0A%0AThanks%2C%0A">
+            Enquire Now
+          </a>
+          <div class="after-enquire">We will contact you soon with the next steps and available session details.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Junior Tutors -->
+  <div class="junior-header">
+    <div class="section-title" style="font-size:18px;">Junior Tutors</div>
+    <div class="section-line">
+      Our junior tutors study at top universities and have achieved A* grades in their subjects. They deliver structured sessions, clear explanations, and exam focused technique.
+    </div>
+  </div>
+
+  <!-- Junior tutors grid (all same size) -->
+  <div class="tutor-grid" aria-label="Junior Tutors">
+
+    <!-- Ilyes -->
+    <div class="tutor-tile t1">
+      <div class="tutor-img">
+        <img src="images/tutor-ilyes.jpg" alt="Ilyes Kallel">
+      </div>
+      <div class="tutor-info">
+        <div class="tutor-name">Ilyes Kallel</div>
+        <div class="tutor-study">Studying BSc Statistics, Economics and Finance at UCL.</div>
+        <div class="tutor-desc">Teaches: Mathematics (GCSE and A level). A level results: A* Mathematics, A Further Mathematics.</div>
+
+        <div class="enquire-area">
+          <a class="enquire-btn"
+             href="mailto:menturacontact@gmail.com?subject=Tutoring%20Enquiry%20Ilyes%20Kallel&body=Hi%20Mentura%2C%0A%0AI%27d%20like%20to%20enquire%20about%20tutoring%20with%20Ilyes%20Kallel.%0A%0ASubject%3A%0ALevel%20GCSE%20or%20A%20level%3A%0AExam%20board%20if%20known%3A%0ATopics%3A%0AAvailability%3A%0A%0AThanks%2C%0A">
+            Enquire Now
+          </a>
+          <div class="after-enquire">We will contact you soon with the next steps and available session details.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maanish -->
+    <div class="tutor-tile t2">
+      <div class="tutor-img">
+        <img src="images/tutor-maanish.jpg" alt="Maanish Kandeepan" class="maanish-fix">
+      </div>
+      <div class="tutor-info">
+        <div class="tutor-name">Maanish Kandeepan</div>
+        <div class="tutor-study">Studying Mathematics and Statistics at the University of Warwick.</div>
+        <div class="tutor-desc">Teaches: Mathematics (GCSE and A level). A level results: A* Mathematics, A* Further Mathematics.</div>
+
+        <div class="enquire-area">
+          <a class="enquire-btn"
+             href="mailto:menturacontact@gmail.com?subject=Tutoring%20Enquiry%20Maanish%20Kandeepan&body=Hi%20Mentura%2C%0A%0AI%27d%20like%20to%20enquire%20about%20tutoring%20with%20Maanish%20Kandeepan.%0A%0ASubject%3A%0ALevel%20GCSE%20or%20A%20level%3A%0AExam%20board%20if%20known%3A%0ATopics%3A%0AAvailability%3A%0A%0AThanks%2C%0A">
+            Enquire Now
+          </a>
+          <div class="after-enquire">We will contact you soon with the next steps and available session details.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Milo -->
+    <div class="tutor-tile t3">
+      <div class="tutor-img">
+        <img src="images/tutor-milo.jpg" alt="Milo Brown">
+      </div>
+      <div class="tutor-info">
+        <div class="tutor-name">Milo Brown</div>
+        <div class="tutor-study">Studying English at the University of Oxford.</div>
+        <div class="tutor-desc">Teaches: English Literature (GCSE and A level). A level results: A* English Literature (100%).</div>
+
+        <div class="enquire-area">
+          <a class="enquire-btn"
+             href="mailto:menturacontact@gmail.com?subject=Tutoring%20Enquiry%20Milo%20Brown&body=Hi%20Mentura%2C%0A%0AI%27d%20like%20to%20enquire%20about%20tutoring%20with%20Milo%20Brown.%0A%0ASubject%3A%0ALevel%20GCSE%20or%20A%20level%3A%0AExam%20board%20if%20known%3A%0ATopics%3A%0AAvailability%3A%0A%0AThanks%2C%0A">
+            Enquire Now
+          </a>
+          <div class="after-enquire">We will contact you soon with the next steps and available session details.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shubhan -->
+    <div class="tutor-tile t4">
+      <div class="tutor-img">
+        <img src="images/tutor-shubhan.jpeg" alt="Shubhan Somani" class="shubhan-fix">
+      </div>
+      <div class="tutor-info">
+        <div class="tutor-name">Shubhan Somani</div>
+        <div class="tutor-study">Studying Mathematics and Economics at LSE.</div>
+        <div class="tutor-desc">Teaches: Mathematics (GCSE and A level). A level results: A* Mathematics, A* Further Mathematics.</div>
+
+        <div class="enquire-area">
+          <a class="enquire-btn"
+             href="mailto:menturacontact@gmail.com?subject=Tutoring%20Enquiry%20Shubhan%20Somani&body=Hi%20Mentura%2C%0A%0AI%27d%20like%20to%20enquire%20about%20tutoring%20with%20Shubhan%20Somani.%0A%0ASubject%3A%0ALevel%20GCSE%20or%20A%20level%3A%0AExam%20board%20if%20known%3A%0ATopics%3A%0AAvailability%3A%0A%0AThanks%2C%0A">
+            Enquire Now
+          </a>
+          <div class="after-enquire">We will contact you soon with the next steps and available session details.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adithya -->
+    <div class="tutor-tile t5">
+      <div class="tutor-img">
+        <img src="images/tutor-adithya.jpg" alt="Adithya Anand">
+      </div>
+      <div class="tutor-info">
+        <div class="tutor-name">Adithya Anand</div>
+        <div class="tutor-study">Studying Mechanical Engineering at the University of Warwick.</div>
+        <div class="tutor-desc">Teaches: Mathematics (GCSE and A level). A level results: A* Mathematics, A* Further Mathematics.</div>
+
+        <div class="enquire-area">
+          <a class="enquire-btn"
+             href="mailto:menturacontact@gmail.com?subject=Tutoring%20Enquiry%20Adithya%20Anand&body=Hi%20Mentura%2C%0A%0AI%27d%20like%20to%20enquire%20about%20tutoring%20with%20Adithya%20Anand.%0A%0ASubject%3A%0ALevel%20GCSE%20or%20A%20level%3A%0AExam%20board%20if%20known%3A%0ATopics%3A%0AAvailability%3A%0A%0AThanks%2C%0A">
+            Enquire Now
+          </a>
+          <div class="after-enquire">We will contact you soon with the next steps and available session details.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Laban -->
+    <div class="tutor-tile t6">
+      <div class="tutor-img">
+        <img src="images/tutor-laban.jpg" alt="Laban Davies">
+      </div>
+      <div class="tutor-info">
+        <div class="tutor-name">Laban Davies</div>
+        <div class="tutor-study">Studying Economics at the University of Cambridge. First year.</div>
+        <div class="tutor-desc">
+          Teaches: Mathematics, Further Mathematics, and Economics (GCSE and A level). A level results: A* Mathematics, A* Further Mathematics, A* Economics. Also offers TMUA exam preparation and Cambridge interview support.
+        </div>
+
+        <div class="enquire-area">
+          <a class="enquire-btn"
+             href="mailto:menturacontact@gmail.com?subject=Tutoring%20Enquiry%20Laban%20Davies&body=Hi%20Mentura%2C%0A%0AI%27d%20like%20to%20enquire%20about%20tutoring%20with%20Laban%20Davies.%0A%0ASubject%3A%0ALevel%20GCSE%20or%20A%20level%3A%0AExam%20board%20if%20known%3A%0ATopics%3A%0AAvailability%3A%0A%0AThanks%2C%0A">
+            Enquire Now
+          </a>
+          <div class="after-enquire">We will contact you soon with the next steps and available session details.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+  function typeEffect(id, text, speed = 65) {
+    const el = document.getElementById(id);
+    el.textContent = "";
+    let i = 0;
+    function typing() {
+      if (i < text.length) {
+        el.textContent = text.substring(0, i + 1);
+        i++;
+        setTimeout(typing, speed);
+      }
+    }
+    typing();
+  }
+
+  window.onload = function() {
+    typeEffect("typing-main", "Tutoring Services");
+  };
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
