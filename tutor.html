@@ -151,14 +151,14 @@
       text-align:center;
     }
 
-    /* GRID (3 PER ROW, TWO ROWS) */
+    /* GRID (3 PER ROW) */
     .tutor-grid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
       gap:14px;
       text-align:left;
       margin-top: 14px;
-      align-items: stretch; /* makes tiles stretch evenly */
+      align-items: stretch;
     }
 
     @media (max-width: 980px){
@@ -177,7 +177,7 @@
       justify-self:center;
       transition:.18s ease;
 
-      /* ✅ force equal height across grid */
+      /* ✅ equal height across all junior tutors */
       height: 520px;
       display:flex;
       flex-direction:column;
@@ -206,6 +206,7 @@
     .t4{ animation-delay:.50s; }
     .t5{ animation-delay:.58s; }
     .t6{ animation-delay:.66s; }
+    .t7{ animation-delay:.74s; }
 
     /* IMAGE WRAPPER */
     .tutor-img{
@@ -217,7 +218,7 @@
       flex: 0 0 auto;
     }
 
-    /* MAKE IMAGES LOOK CLEARER (best possible via CSS) */
+    /* Make images look clearer (best possible via CSS) */
     .tutor-img img{
       width:100%;
       height:100%;
@@ -274,10 +275,8 @@
       margin-bottom:10px;
     }
 
-    /* ✅ keep button and final line pinned to bottom so all cards align */
-    .enquire-area{
-      margin-top:auto;
-    }
+    /* keep button pinned to bottom for alignment */
+    .enquire-area{ margin-top:auto; }
 
     .enquire-btn{
       width:100%;
@@ -335,10 +334,11 @@
   <div class="section-block" style="animation-delay:0.10s;">
     <div class="section-title">Head Of Education</div>
     <div class="section-line">
-     
+      Ravi is an experienced tutor who oversees education operations at Mentura, maintaining lesson quality and making sure every student gets the right plan and support.
+    </div>
   </div>
 
-  <!-- Ravi centred at the top -->
+  <!-- Ravi centred -->
   <div class="featured-row">
     <div class="tutor-tile featured">
       <div class="tutor-img">
@@ -493,6 +493,26 @@
       </div>
     </div>
 
+    <!-- Noor -->
+    <div class="tutor-tile t7">
+      <div class="tutor-img">
+        <img src="images/Noor.JPEG" alt="Noor Zangi">
+      </div>
+      <div class="tutor-info">
+        <div class="tutor-name">Noor Zangi</div>
+        <div class="tutor-study">Studying Economics, Philosophy and Psychology at the University of Warwick.</div>
+        <div class="tutor-desc">Teaches: Economics (GCSE and A level). A level results: A* Economics (97%).</div>
+
+        <div class="enquire-area">
+          <a class="enquire-btn"
+             href="mailto:menturacontact@gmail.com?subject=Tutoring%20Enquiry%20Noor%20Zangi&body=Hi%20Mentura%2C%0A%0AI%27d%20like%20to%20enquire%20about%20tutoring%20with%20Noor%20Zangi.%0A%0ASubject%3A%0ALevel%20GCSE%20or%20A%20level%3A%0AExam%20board%20if%20known%3A%0ATopics%3A%0AAvailability%3A%0A%0AThanks%2C%0A">
+            Enquire Now
+          </a>
+          <div class="after-enquire">We will contact you soon with the next steps and available session details.</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </main>
@@ -519,6 +539,8 @@
 
 </body>
 </html>
+
+
 
 
 
