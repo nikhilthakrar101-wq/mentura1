@@ -64,7 +64,12 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: session.url })
+      body: JSON.stringify({
+  url: session.url,
+  debug_supabase_url: process.env.SUPABASE_URL,
+  debug_user_id: user_id
+})
+
     };
   } catch (err) {
     return {
