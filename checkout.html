@@ -58,9 +58,7 @@
       position: relative;
     }
 
-    .plan-card.active {
-      border-color: #4ade80;
-    }
+    .plan-card.active { border-color: #4ade80; }
 
     .plan-card.popular::after {
       content: "Most Popular";
@@ -75,17 +73,8 @@
       border-radius: 6px;
     }
 
-    .plan-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .plan-price {
-      font-size: 18px;
-      color: var(--accent-muted);
-      margin-bottom: 16px;
-    }
+    .plan-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .plan-price { font-size: 18px; color: var(--accent-muted); margin-bottom: 16px; }
 
     .plan-list {
       list-style: none;
@@ -95,9 +84,7 @@
       color: var(--accent-muted);
     }
 
-    .plan-list li {
-      margin-bottom: 10px;
-    }
+    .plan-list li { margin-bottom: 10px; }
 
     .testimonial-rotator {
       margin: 90px 0;
@@ -113,10 +100,7 @@
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
 
-    .testimonial-text.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .testimonial-text.active { opacity: 1; transform: translateY(0); }
 
     .form-box {
       background: var(--card-dark);
@@ -141,13 +125,8 @@
       color: var(--accent);
     }
 
-    input::placeholder {
-      color: var(--accent-muted);
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
+    input::placeholder { color: var(--accent-muted); }
+    .full { grid-column: 1 / -1; }
 
     button {
       margin-top: 28px;
@@ -186,10 +165,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://kdilnufycjzckxsqawud.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_IjarggBw4rh6Brupgj4lyQ_-6-2eFZ2";
 
-    // IMPORTANT: Make sure this Payment Link is set up in Stripe as a recurring subscription every 3 months.
-    const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_9B69AVeG65vWdhCeM0gjC01";
+    // IMPORTANT: this should be your Supabase "anon public" key from Project Settings -> API
+    const SUPABASE_ANON_KEY = "sb_publishable_IjarggBw4rh6Brupgj4lyQ_-6-2eFZ2";
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   </script>
@@ -291,25 +269,54 @@
 
     button.disabled = true;
     const oldText = button.textContent;
-    button.textContent = "Creating account...";
 
-    const { error } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: { data: { first, last } }
-    });
+    try {
+      button.textContent = "Creating account...";
 
-    if (error) {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { first, last } }
+      });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      if (!data?.user?.id) {
+        alert("No user ID returned. Check Supabase email confirmation settings.");
+        return;
+      }
+
+      if (selectedPlan === "free") {
+        window.location.href = "/dashboard.html";
+        return;
+      }
+
+      button.textContent = "Sending you to payment...";
+
+      const res = await fetch("/.netlify/functions/create_checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, user_id: data.user.id })
+      });
+
+      const out = await res.json().catch(() => ({}));
+
+      if (!res.ok || !out.url) {
+        alert(out.error || `Checkout failed (HTTP ${res.status})`);
+        return;
+      }
+
+      window.location.href = out.url;
+
+    } catch (err) {
+      alert("Unexpected error: " + (err?.message || err));
+      console.error(err);
+    } finally {
       button.disabled = false;
       button.textContent = oldText;
-      alert(error.message);
-      return;
-    }
-
-    if (selectedPlan === "plus") {
-      window.location.href = STRIPE_PAYMENT_LINK;
-    } else {
-      window.location.href = "/dashboard.html";
     }
   }
 
