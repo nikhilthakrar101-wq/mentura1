@@ -162,8 +162,11 @@
       width: 100%;
     }
 
-    button:hover {
-      filter: brightness(.9);
+    button:hover { filter: brightness(.9); }
+
+    button[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .small-note {
@@ -174,24 +177,21 @@
     }
 
     @media (max-width: 760px) {
-      .plans,
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .testimonial-text {
-        font-size: 17px;
-      }
+      .plans, .form-grid { grid-template-columns: 1fr; }
+      .testimonial-text { font-size: 17px; }
     }
   </style>
 
   <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabaseClient = supabase.createClient(
-      "YOUR_SUPABASE_URL",
-      "YOUR_SUPABASE_ANON_KEY"
-    );
+    const SUPABASE_URL = "https://kdilnufycjzckxsqawud.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_IjarggBw4rh6Brupgj4lyQ_-6-2eFZ2";
+
+    // IMPORTANT: Make sure this Payment Link is set up in Stripe as a recurring subscription every 3 months.
+    const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_9B69AVeG65vWdhCeM0gjC01";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   </script>
 </head>
 
@@ -217,7 +217,7 @@
 
     <div class="plan-card popular" data-plan="plus">
       <div class="plan-title">Mentura Plus</div>
-      <div class="plan-price">£9.99 / month</div>
+      <div class="plan-price">£9.99 / 3 months</div>
       <ul class="plan-list">
         <li>4 mentor calls per month</li>
         <li>Mock interviews & application support</li>
@@ -232,15 +232,15 @@
   </div>
 
   <div class="form-box">
-    <form onsubmit="handleSignup(event)">
+    <form id="signup-form" onsubmit="handleSignup(event)">
       <div class="form-grid">
-        <input type="text" placeholder="First name" required>
-        <input type="text" placeholder="Last name" required>
-        <input class="full" type="email" placeholder="Email address" required>
-        <input class="full" type="password" placeholder="Password" required>
+        <input name="first" type="text" placeholder="First name" required>
+        <input name="last" type="text" placeholder="Last name" required>
+        <input name="email" class="full" type="email" placeholder="Email address" required>
+        <input name="password" class="full" type="password" placeholder="Password" required>
       </div>
 
-      <button id="submit-btn">Continue</button>
+      <button id="submit-btn" type="submit">Continue</button>
     </form>
 
     <div class="small-note">
@@ -279,21 +279,35 @@
   async function handleSignup(e) {
     e.preventDefault();
 
-    const email = document.querySelector('[type="email"]').value;
-    const password = document.querySelector('[type="password"]').value;
+    const first = document.querySelector('input[name="first"]').value.trim();
+    const last = document.querySelector('input[name="last"]').value.trim();
+    const email = document.querySelector('input[name="email"]').value.trim();
+    const password = document.querySelector('input[name="password"]').value;
+
+    if (!first || !last) {
+      alert("Please enter your first and last name.");
+      return;
+    }
+
+    button.disabled = true;
+    const oldText = button.textContent;
+    button.textContent = "Creating account...";
 
     const { error } = await supabaseClient.auth.signUp({
       email,
-      password
+      password,
+      options: { data: { first, last } }
     });
 
     if (error) {
+      button.disabled = false;
+      button.textContent = oldText;
       alert(error.message);
       return;
     }
 
     if (selectedPlan === "plus") {
-      window.location.href = "YOUR_STRIPE_PAYMENT_LINK";
+      window.location.href = STRIPE_PAYMENT_LINK;
     } else {
       window.location.href = "/dashboard.html";
     }
@@ -303,7 +317,6 @@
     "Mentura helped me understand how degree apprenticeships actually work",
     "More clarity in one conversation than weeks of independent research",
     "I finally understood the difference between university and degree apprenticeships",
-    "The application and assessment centre process was explained clearly",
     "I stopped guessing and started making confident decisions"
   ];
 
@@ -325,6 +338,7 @@
 
 </body>
 </html>
+
 
 
 
