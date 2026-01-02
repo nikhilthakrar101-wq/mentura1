@@ -11,6 +11,7 @@
       --card-dark: #1f2933;
       --accent: #ffffff;
       --accent-muted: #9ca3af;
+      --green: #4ade80;
     }
 
     body {
@@ -58,14 +59,14 @@
       position: relative;
     }
 
-    .plan-card.active { border-color: #4ade80; }
+    .plan-card.active { border-color: var(--green); }
 
     .plan-card.popular::after {
       content: "Most Popular";
       position: absolute;
       top: -12px;
       right: 18px;
-      background: #4ade80;
+      background: var(--green);
       color: #111827;
       padding: 4px 10px;
       font-size: 12px;
@@ -85,22 +86,6 @@
     }
 
     .plan-list li { margin-bottom: 10px; }
-
-    .testimonial-rotator {
-      margin: 90px 0;
-      text-align: center;
-      min-height: 32px;
-    }
-
-    .testimonial-text {
-      font-size: 20px;
-      font-weight: 600;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    .testimonial-text.active { opacity: 1; transform: translateY(0); }
 
     .form-box {
       background: var(--card-dark);
@@ -142,11 +127,7 @@
     }
 
     button:hover { filter: brightness(.9); }
-
-    button[disabled] {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    button[disabled] { opacity: .6; cursor: not-allowed; }
 
     .small-note {
       text-align: center;
@@ -157,7 +138,6 @@
 
     @media (max-width: 760px) {
       .plans, .form-grid { grid-template-columns: 1fr; }
-      .testimonial-text { font-size: 17px; }
     }
   </style>
 
@@ -165,10 +145,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://kdilnufycjzckxsqawud.supabase.co";
-
-    // IMPORTANT: this should be your Supabase "anon public" key from Project Settings -> API
-    const SUPABASE_ANON_KEY = "sb_publishable_IjarggBw4rh6Brupgj4lyQ_-6-2eFZ2";
-
+    const SUPABASE_ANON_KEY = "REPLACE_WITH_YOUR_SUPABASE_ANON_PUBLIC_KEY"; // usually starts with eyJ...
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   </script>
 </head>
@@ -176,11 +153,8 @@
 <body>
 
 <div class="container">
-
   <h1>Create your Mentura account</h1>
-  <div class="subtitle">
-    Choose a plan, create your account, and get clarity on your next step.
-  </div>
+  <div class="subtitle">Choose a plan, create your account, and get clarity on your next step.</div>
 
   <div class="plans">
     <div class="plan-card" data-plan="free">
@@ -205,12 +179,8 @@
     </div>
   </div>
 
-  <div class="testimonial-rotator">
-    <div id="testimonial" class="testimonial-text"></div>
-  </div>
-
   <div class="form-box">
-    <form id="signup-form" onsubmit="handleSignup(event)">
+    <form onsubmit="handleSignup(event)">
       <div class="form-grid">
         <input name="first" type="text" placeholder="First name" required>
         <input name="last" type="text" placeholder="Last name" required>
@@ -219,13 +189,12 @@
       </div>
 
       <button id="submit-btn" type="submit">Continue</button>
+
+      <div class="small-note">
+        By creating an account, you agree to Mentura’s Terms & Privacy Policy.
+      </div>
     </form>
-
-    <div class="small-note">
-      By creating an account, you agree to Mentura’s Terms & Privacy Policy.
-    </div>
   </div>
-
 </div>
 
 <script>
@@ -262,11 +231,6 @@
     const email = document.querySelector('input[name="email"]').value.trim();
     const password = document.querySelector('input[name="password"]').value;
 
-    if (!first || !last) {
-      alert("Please enter your first and last name.");
-      return;
-    }
-
     button.disabled = true;
     const oldText = button.textContent;
 
@@ -285,21 +249,37 @@
       }
 
       if (!data?.user?.id) {
-        alert("No user ID returned. Check Supabase email confirmation settings.");
+        alert("No user ID returned from signup.");
         return;
       }
 
+      const user_id = data.user.id;
+
+      // ✅ FREE: write plan/status to profiles so Supabase knows what they chose
       if (selectedPlan === "free") {
+        const { error: profileErr } = await supabaseClient
+          .from("profiles")
+          .upsert(
+            { user_id, email, first_name: first, last_name: last, plan: "free", status: "free" },
+            { onConflict: "user_id" }
+          );
+
+        if (profileErr) {
+          alert("Profile save failed: " + profileErr.message);
+          return;
+        }
+
         window.location.href = "/dashboard.html";
         return;
       }
 
+      // ✅ PLUS: start Stripe checkout via Netlify Function (this writes plan=plus, status=pending)
       button.textContent = "Sending you to payment...";
 
       const res = await fetch("/.netlify/functions/create_checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, user_id: data.user.id })
+        body: JSON.stringify({ email, user_id, first_name: first, last_name: last })
       });
 
       const out = await res.json().catch(() => ({}));
@@ -312,39 +292,18 @@
       window.location.href = out.url;
 
     } catch (err) {
-      alert("Unexpected error: " + (err?.message || err));
       console.error(err);
+      alert("Unexpected error: " + (err?.message || err));
     } finally {
       button.disabled = false;
       button.textContent = oldText;
     }
   }
-
-  const testimonials = [
-    "Mentura helped me understand how degree apprenticeships actually work",
-    "More clarity in one conversation than weeks of independent research",
-    "I finally understood the difference between university and degree apprenticeships",
-    "I stopped guessing and started making confident decisions"
-  ];
-
-  let tIndex = 0;
-  const tEl = document.getElementById("testimonial");
-
-  function rotateTestimonial() {
-    tEl.classList.remove("active");
-    setTimeout(() => {
-      tEl.textContent = testimonials[tIndex];
-      tEl.classList.add("active");
-      tIndex = (tIndex + 1) % testimonials.length;
-    }, 400);
-  }
-
-  rotateTestimonial();
-  setInterval(rotateTestimonial, 4500);
 </script>
 
 </body>
 </html>
+
 
 
 
