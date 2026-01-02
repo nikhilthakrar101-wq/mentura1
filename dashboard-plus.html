@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard (Plus) | Mentura</title>
+
+  <style>
+    :root{
+      --bg:#111827; --card:#1f2933; --text:#fff; --muted:#9ca3af;
+      --border:rgba(255,255,255,.10); --green:#4ade80;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; font-family:"Segoe UI", Arial, sans-serif;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      padding:24px;
+    }
+    .box{
+      width:100%; max-width:720px;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:38px 28px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:8px 14px; border-radius:999px;
+      background:rgba(74,222,128,.12);
+      border:1px solid rgba(74,222,128,.40);
+      color:var(--green);
+      font-weight:900;
+      margin-bottom:16px;
+    }
+    h1{ margin:0 0 10px 0; font-size:30px; }
+    p{ margin:0; color:var(--muted); line-height:1.65; }
+    .grid{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      text-align:left;
+    }
+    @media (max-width:760px){ .grid{ grid-template-columns:1fr; } }
+    .tile{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      border-radius:12px;
+      padding:16px;
+    }
+    .tile h3{ margin:0 0 8px 0; font-size:16px; }
+    .tile p{ margin:0; font-size:14px; }
+    .actions{
+      margin-top:20px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    a.btn{
+      display:inline-block;
+      padding:12px 16px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:900;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      background:#ffffff;
+      color:#111827;
+    }
+    a.ghost{
+      background:transparent; color:var(--text);
+      border:1px solid rgba(255,255,255,.16);
+    }
+    .glow{
+      position:absolute;
+      inset:-120px -140px auto -140px;
+      height:220px;
+      background:
+        radial-gradient(circle at 25% 40%, rgba(74,222,128,.35), transparent 42%),
+        radial-gradient(circle at 70% 30%, rgba(255,255,255,.12), transparent 45%);
+      filter:blur(2px);
+      opacity:.95;
+      pointer-events:none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="glow"></div>
+    <div class="badge">⭐ Mentura Plus Active</div>
+    <h1>Welcome to Mentura Plus</h1>
+    <p>Your membership is active. If you ever need anything, email us at <a href="mailto:menturacontact@gmail.com" style="color:#fff; text-decoration:underline; text-underline-offset:3px;">menturacontact@gmail.com</a>.</p>
+
+    <div class="grid">
+      <div class="tile">
+        <h3>Mock interviews</h3>
+        <p>Get structured mock interviews + feedback focused on your goals.</p>
+      </div>
+      <div class="tile">
+        <h3>Application support</h3>
+        <p>Personal statement, CV reviews, and help planning your next steps.</p>
+      </div>
+      <div class="tile">
+        <h3>Exclusive opportunities</h3>
+        <p>Access member-only opportunities and curated resources.</p>
+      </div>
+      <div class="tile">
+        <h3>Priority support</h3>
+        <p>Faster replies and personalised guidance from the team.</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a class="btn" href="/index.html">Go to Mentura</a>
+      <a class="btn ghost" href="mailto:menturacontact@gmail.com">Contact us</a>
+    </div>
+  </div>
+</body>
+</html>
