@@ -38,12 +38,12 @@
     .actions{
       display:flex; gap:10px; flex-wrap:wrap;
     }
-    a.linkbtn{
+    a.linkbtn, button.linkbtn{
       display:inline-block; padding:10px 14px; border-radius:10px;
       background:#ffffff; color:#111827; text-decoration:none; font-weight:800;
-      letter-spacing:.03em;
+      letter-spacing:.03em; border:none; cursor:pointer;
     }
-    a.ghost{
+    a.ghost, button.ghost{
       background:transparent; color:var(--text);
       border:1px solid var(--border);
     }
@@ -95,16 +95,8 @@
       border-color:rgba(74,222,128,.55);
       background:rgba(74,222,128,.08);
     }
-    .choice-title{
-      font-weight:800;
-      letter-spacing:-0.01em;
-    }
-    .choice-sub{
-      color:var(--muted);
-      font-size:13px;
-      margin-top:6px;
-      line-height:1.45;
-    }
+    .choice-title{ font-weight:800; letter-spacing:-0.01em; }
+    .choice-sub{ color:var(--muted); font-size:13px; margin-top:6px; line-height:1.45; }
     .radio{
       appearance:none;
       width:18px;
@@ -115,9 +107,7 @@
       position:relative;
       flex:0 0 auto;
     }
-    .choice.active .radio{
-      border-color:rgba(74,222,128,.9);
-    }
+    .choice.active .radio{ border-color:rgba(74,222,128,.9); }
     .choice.active .radio::after{
       content:"";
       position:absolute;
@@ -140,31 +130,19 @@
       display:flex;
       gap:10px;
       flex-wrap:wrap;
+      align-items:center;
     }
-    button{
-      padding:12px 16px;
-      border-radius:10px;
-      border:none;
-      cursor:pointer;
-      font-weight:900;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      background:#ffffff;
-      color:#111827;
-    }
-    button[disabled]{ opacity:.6; cursor:not-allowed; }
 
-    .success{
-      margin-top:14px;
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid rgba(74,222,128,.45);
-      background:rgba(74,222,128,.10);
-      color:#d1fae5;
-      display:none;
-      font-weight:700;
-    }
+    button[disabled]{ opacity:.6; cursor:not-allowed; }
   </style>
+
+  <!-- SUPABASE (needed for upgrade button to know the logged-in user) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://kdilnufycjzckxsqawud.supabase.co";
+    const SUPABASE_ANON_KEY = "REPLACE_WITH_YOUR_SUPABASE_ANON_PUBLIC_KEY"; // usually starts with eyJ...
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
 </head>
 
 <body>
@@ -174,7 +152,7 @@
         <div class="pill">Plan: <b>Free</b></div>
         <div class="actions">
           <a class="linkbtn ghost" href="mailto:menturacontact@gmail.com">Contact us</a>
-          <a class="linkbtn" href="/create-account.html">Upgrade to Plus</a>
+          <button id="upgradeBtn" class="linkbtn" type="button">Upgrade to Plus</button>
         </div>
       </div>
 
@@ -186,10 +164,10 @@
           <label for="email">Your email</label>
           <input id="email" name="email" type="email" placeholder="you@example.com" required />
 
-          <!-- Formspree: nice subject line -->
           <input type="hidden" name="_subject" value="Mentura Free Newsletter Signup" />
-          <!-- Optional: redirect back here -->
-          <input type="hidden" name="_next" value="/dashboard-free.html?sent=1" />
+
+          <!-- We'll set this dynamically so it works on mentura.io AND your netlify URL -->
+          <input id="nextUrl" type="hidden" name="_next" value="" />
 
           <!-- The chosen newsletter (only one) -->
           <input class="hidden" type="radio" name="newsletter" id="econ" value="Economics Breakdown of the week" required />
@@ -223,14 +201,13 @@
           </div>
 
           <div class="submitRow">
-            <button id="submitBtn" type="submit">Subscribe</button>
+            <button id="submitBtn" class="linkbtn" type="submit">Subscribe</button>
             <a class="linkbtn ghost" href="/index.html">Back to Mentura</a>
           </div>
 
-          <div id="successMsg" class="success">✅ Sent — check your email.</div>
-
           <div class="note">
-            Questions? Email us at <a href="mailto:menturacontact@gmail.com" style="color:#fff; text-decoration:underline; text-underline-offset:3px;">menturacontact@gmail.com</a>
+            Questions? Email us at
+            <a href="mailto:menturacontact@gmail.com" style="color:#fff; text-decoration:underline; text-underline-offset:3px;">menturacontact@gmail.com</a>
           </div>
         </form>
       </div>
@@ -238,17 +215,16 @@
   </div>
 
   <script>
-    const form = document.getElementById("newsletter-form");
-    const choices = Array.from(document.querySelectorAll(".choice"));
-    const submitBtn = document.getElementById("submitBtn");
-    const successMsg = document.getElementById("successMsg");
+    // Send Formspree back to YOUR thank-you page (not Formspree’s page)
+    document.getElementById("nextUrl").value = window.location.origin + "/newsletter-thanks.html";
 
+    // Newsletter choice UI
+    const choices = Array.from(document.querySelectorAll(".choice"));
     function setActive(targetId) {
       choices.forEach(c => c.classList.toggle("active", c.dataset.target === targetId));
       const input = document.getElementById(targetId);
       if (input) input.checked = true;
     }
-
     choices.forEach(choice => {
       const pick = () => setActive(choice.dataset.target);
       choice.addEventListener("click", pick);
@@ -257,15 +233,54 @@
       });
     });
 
-    // If redirected back with ?sent=1
-    if (new URLSearchParams(window.location.search).get("sent") === "1") {
-      successMsg.style.display = "block";
-    }
-
-    // Small UX: disable button on submit
+    // Disable Subscribe button on submit (prevents double submit)
+    const form = document.getElementById("newsletter-form");
+    const submitBtn = document.getElementById("submitBtn");
     form.addEventListener("submit", () => {
       submitBtn.disabled = true;
       submitBtn.textContent = "Sending…";
+    });
+
+    // Upgrade button: create a Stripe Checkout session via your Netlify function
+    const upgradeBtn = document.getElementById("upgradeBtn");
+
+    upgradeBtn.addEventListener("click", async () => {
+      const old = upgradeBtn.textContent;
+      upgradeBtn.disabled = true;
+      upgradeBtn.textContent = "Opening checkout…";
+
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session?.user) {
+          // Not logged in -> send them to signup
+          window.location.href = "/create-account.html";
+          return;
+        }
+
+        const email = session.user.email;
+        const user_id = session.user.id;
+
+        const res = await fetch("/.netlify/functions/create_checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, user_id })
+        });
+
+        const out = await res.json().catch(() => ({}));
+
+        if (!res.ok || !out.url) {
+          alert(out.error || `Checkout failed (HTTP ${res.status})`);
+          return;
+        }
+
+        window.location.href = out.url;
+      } catch (e) {
+        console.error(e);
+        alert("Something went wrong starting checkout.");
+      } finally {
+        upgradeBtn.disabled = false;
+        upgradeBtn.textContent = old;
+      }
     });
   </script>
 </body>
