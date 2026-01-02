@@ -23,7 +23,7 @@ exports.handler = async (event) => {
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    // 1) Upsert profile + SELECT it back so we can prove it exists
+    // Upsert + read back (proof)
     const { data: upserted, error: upsertErr } = await supabaseAdmin
       .from("profiles")
       .upsert(
@@ -36,11 +36,10 @@ exports.handler = async (event) => {
       return {
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: upsertErr.message })
+        body: JSON.stringify({ error: "UPSERT FAILED: " + upsertErr.message })
       };
     }
 
-    // 2) Create checkout session
     const origin =
       process.env.URL ||
       event.headers.origin ||
@@ -55,15 +54,14 @@ exports.handler = async (event) => {
       metadata: { supabase_user_id: user_id }
     });
 
-    // 3) Return debug proof
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         url: session.url,
         debug_supabase_url: process.env.SUPABASE_URL,
-        debug_profile_rows_returned: upserted?.length || 0,
-        debug_first_profile_row: upserted?.[0] || null
+        debug_rows_returned: upserted?.length || 0,
+        debug_first_row: upserted?.[0] || null
       })
     };
   } catch (err) {
