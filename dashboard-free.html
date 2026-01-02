@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,9 +35,8 @@
       color:var(--muted); font-weight:700; font-size:13px;
     }
     .pill b{ color:var(--text); }
-    .actions{
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
     a.linkbtn, button.linkbtn{
       display:inline-block; padding:10px 14px; border-radius:10px;
       background:#ffffff; color:#111827; text-decoration:none; font-weight:800;
@@ -48,6 +46,7 @@
       background:transparent; color:var(--text);
       border:1px solid var(--border);
     }
+    button[disabled]{ opacity:.6; cursor:not-allowed; }
 
     .form{
       margin-top:18px;
@@ -98,6 +97,7 @@
     }
     .choice-title{ font-weight:800; letter-spacing:-0.01em; }
     .choice-sub{ color:var(--muted); font-size:13px; margin-top:6px; line-height:1.45; }
+
     .radio{
       appearance:none;
       width:18px;
@@ -117,15 +117,7 @@
       border-radius:999px;
     }
 
-    .note{
-      margin-top:14px;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.55;
-    }
-
     .hidden{ display:none; }
-
     .submitRow{
       margin-top:14px;
       display:flex;
@@ -134,14 +126,20 @@
       align-items:center;
     }
 
-    button[disabled]{ opacity:.6; cursor:not-allowed; }
+    .note{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+    }
+    .note a{ color:#fff; text-decoration:underline; text-underline-offset:3px; }
   </style>
 
-  <!-- SUPABASE (needed for upgrade button to know the logged-in user) -->
+  <!-- SUPABASE (for upgrade button session) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://kdilnufycjzckxsqawud.supabase.co";
-    const SUPABASE_ANON_KEY = "REPLACE_WITH_YOUR_SUPABASE_ANON_PUBLIC_KEY"; // usually starts with eyJ...
+    const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE"; // <-- paste the eyJ... key here
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   </script>
 </head>
@@ -161,16 +159,14 @@
       <p>Pick exactly one option below and we’ll email it to you each week.</p>
 
       <div class="form">
-        <form id="newsletter-form" action="https://formspree.io/f/maqnozeg" method="POST">
+        <!-- No action/method here. We'll submit via fetch() so we control redirect -->
+        <form id="newsletter-form">
           <label for="email">Your email</label>
           <input id="email" name="email" type="email" placeholder="you@example.com" required />
 
           <input type="hidden" name="_subject" value="Mentura Free Newsletter Signup" />
 
-          <!-- IMPORTANT: Absolute URL so Formspree redirects to YOUR thank-you page -->
-          <input type="hidden" name="_next" value="https://mentura.io/newsletter-thanks.html">
-
-          <!-- The chosen newsletter (only one) -->
+          <!-- Only one option -->
           <input class="hidden" type="radio" name="newsletter" id="econ" value="Economics Breakdown of the week" required />
           <input class="hidden" type="radio" name="newsletter" id="market" value="Market Breakdown of the week" required />
           <input class="hidden" type="radio" name="newsletter" id="deal" value="Deal of the week" required />
@@ -207,8 +203,7 @@
           </div>
 
           <div class="note">
-            Questions? Email us at
-            <a href="mailto:menturacontact@gmail.com" style="color:#fff; text-decoration:underline; text-underline-offset:3px;">menturacontact@gmail.com</a>
+            Questions? Email us at <a href="mailto:menturacontact@gmail.com">menturacontact@gmail.com</a>
           </div>
         </form>
       </div>
@@ -231,17 +226,48 @@
       });
     });
 
-    // Disable Subscribe button on submit (prevents double submit)
-    const form = document.getElementById("newsletter-form");
+    // Submit newsletter to Formspree via fetch(), then redirect to YOUR page
+    const FORM_ENDPOINT = "https://formspree.io/f/maqnozeg";
+    const newsletterForm = document.getElementById("newsletter-form");
     const submitBtn = document.getElementById("submitBtn");
-    form.addEventListener("submit", () => {
+
+    newsletterForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
       submitBtn.disabled = true;
+      const oldText = submitBtn.textContent;
       submitBtn.textContent = "Sending…";
+
+      try {
+        const formData = new FormData(newsletterForm);
+
+        const res = await fetch(FORM_ENDPOINT, {
+          method: "POST",
+          body: formData,
+          headers: { "Accept": "application/json" }
+        });
+
+        if (!res.ok) {
+          const out = await res.json().catch(() => ({}));
+          const msg = out?.errors?.[0]?.message || "Could not submit. Try again.";
+          alert(msg);
+          submitBtn.disabled = false;
+          submitBtn.textContent = oldText;
+          return;
+        }
+
+        // ✅ redirect to YOUR thank-you page (note your filename spelling)
+        window.location.href = "/newletter-thanks.html";
+      } catch (err) {
+        console.error(err);
+        alert("Network error. Try again.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = oldText;
+      }
     });
 
-    // Upgrade button: create a Stripe Checkout session via your Netlify function
+    // Upgrade button -> Stripe checkout via Netlify function
     const upgradeBtn = document.getElementById("upgradeBtn");
-
     upgradeBtn.addEventListener("click", async () => {
       const old = upgradeBtn.textContent;
       upgradeBtn.disabled = true;
@@ -264,7 +290,6 @@
         });
 
         const out = await res.json().catch(() => ({}));
-
         if (!res.ok || !out.url) {
           alert(out.error || `Checkout failed (HTTP ${res.status})`);
           return;
