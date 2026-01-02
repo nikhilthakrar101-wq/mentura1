@@ -7,7 +7,7 @@ exports.handler = async (event) => {
       return { statusCode: 405, body: "Method Not Allowed" };
     }
 
-    const { email, user_id } = JSON.parse(event.body || "{}");
+    const { email, user_id, first_name, last_name } = JSON.parse(event.body || "{}");
     if (!email || !user_id) {
       return {
         statusCode: 400,
@@ -23,20 +23,26 @@ exports.handler = async (event) => {
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    // Upsert + read back (proof)
-    const { data: upserted, error: upsertErr } = await supabaseAdmin
+    // ✅ This is where Supabase "learns" they chose Plus
+    const { error: upsertErr } = await supabaseAdmin
       .from("profiles")
       .upsert(
-        { user_id, email, plan: "plus", status: "pending" },
+        {
+          user_id,
+          email,
+          first_name: first_name || null,
+          last_name: last_name || null,
+          plan: "plus",
+          status: "pending"
+        },
         { onConflict: "user_id" }
-      )
-      .select("*");
+      );
 
     if (upsertErr) {
       return {
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "UPSERT FAILED: " + upsertErr.message })
+        body: JSON.stringify({ error: "Profile upsert failed: " + upsertErr.message })
       };
     }
 
@@ -57,12 +63,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        url: session.url,
-        debug_supabase_url: process.env.SUPABASE_URL,
-        debug_rows_returned: upserted?.length || 0,
-        debug_first_row: upserted?.[0] || null
-      })
+      body: JSON.stringify({ url: session.url })
     };
   } catch (err) {
     return {
@@ -72,4 +73,5 @@ exports.handler = async (event) => {
     };
   }
 };
+
 
