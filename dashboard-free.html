@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard (Free) | Mentura</title>
+
+  <style>
+    :root{
+      --bg:#111827; --card:#1f2933; --text:#fff; --muted:#9ca3af;
+      --border:rgba(255,255,255,.10); --green:#4ade80;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; font-family:"Segoe UI", Arial, sans-serif;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      padding:24px;
+    }
+    .wrap{ width:100%; max-width:820px; }
+    .card{
+      background:var(--card); border:1px solid var(--border);
+      border-radius:12px; padding:34px 26px;
+    }
+    h1{ margin:0 0 8px 0; font-size:28px; }
+    p{ margin:0 0 18px 0; color:var(--muted); line-height:1.65; }
+    .topbar{
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+      margin-bottom:18px; flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:8px 12px; border-radius:999px;
+      background:rgba(255,255,255,.06); border:1px solid var(--border);
+      color:var(--muted); font-weight:700; font-size:13px;
+    }
+    .pill b{ color:var(--text); }
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    a.linkbtn{
+      display:inline-block; padding:10px 14px; border-radius:10px;
+      background:#ffffff; color:#111827; text-decoration:none; font-weight:800;
+      letter-spacing:.03em;
+    }
+    a.ghost{
+      background:transparent; color:var(--text);
+      border:1px solid var(--border);
+    }
+
+    .form{
+      margin-top:18px;
+      padding:18px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      background:rgba(17,24,39,.35);
+    }
+
+    label{ display:block; font-weight:700; margin-bottom:8px; }
+    input[type="email"]{
+      width:100%;
+      padding:14px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.18);
+      background:#111827;
+      color:#fff;
+      outline:none;
+      margin-bottom:14px;
+    }
+    input[type="email"]::placeholder{ color:var(--muted); }
+
+    .choices{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 860px){ .choices{ grid-template-columns:1fr; } }
+
+    .choice{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      border-radius:12px;
+      padding:16px;
+      cursor:pointer;
+      transition:.18s ease;
+      position:relative;
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .choice:hover{ transform:translateY(-1px); border-color:rgba(255,255,255,.18); }
+    .choice.active{
+      border-color:rgba(74,222,128,.55);
+      background:rgba(74,222,128,.08);
+    }
+    .choice-title{
+      font-weight:800;
+      letter-spacing:-0.01em;
+    }
+    .choice-sub{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:6px;
+      line-height:1.45;
+    }
+    .radio{
+      appearance:none;
+      width:18px;
+      height:18px;
+      border-radius:999px;
+      border:2px solid rgba(255,255,255,.28);
+      display:inline-block;
+      position:relative;
+      flex:0 0 auto;
+    }
+    .choice.active .radio{
+      border-color:rgba(74,222,128,.9);
+    }
+    .choice.active .radio::after{
+      content:"";
+      position:absolute;
+      inset:3px;
+      background:var(--green);
+      border-radius:999px;
+    }
+
+    .note{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .hidden{ display:none; }
+
+    .submitRow{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    button{
+      padding:12px 16px;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:900;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      background:#ffffff;
+      color:#111827;
+    }
+    button[disabled]{ opacity:.6; cursor:not-allowed; }
+
+    .success{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid rgba(74,222,128,.45);
+      background:rgba(74,222,128,.10);
+      color:#d1fae5;
+      display:none;
+      font-weight:700;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="topbar">
+        <div class="pill">Plan: <b>Free</b></div>
+        <div class="actions">
+          <a class="linkbtn ghost" href="mailto:menturacontact@gmail.com">Contact us</a>
+          <a class="linkbtn" href="/create-account.html">Upgrade to Plus</a>
+        </div>
+      </div>
+
+      <h1>Choose your newsletter</h1>
+      <p>Pick exactly one option below and we’ll email it to you each week.</p>
+
+      <div class="form">
+        <form id="newsletter-form" action="https://formspree.io/f/maqnozeg" method="POST">
+          <label for="email">Your email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+
+          <!-- Formspree: nice subject line -->
+          <input type="hidden" name="_subject" value="Mentura Free Newsletter Signup" />
+          <!-- Optional: redirect back here -->
+          <input type="hidden" name="_next" value="/dashboard-free.html?sent=1" />
+
+          <!-- The chosen newsletter (only one) -->
+          <input class="hidden" type="radio" name="newsletter" id="econ" value="Economics Breakdown of the week" required />
+          <input class="hidden" type="radio" name="newsletter" id="market" value="Market Breakdown of the week" required />
+          <input class="hidden" type="radio" name="newsletter" id="deal" value="Deal of the week" required />
+
+          <div class="choices" style="margin-top:10px;">
+            <div class="choice" data-target="econ" tabindex="0" role="button" aria-label="Choose Economics Breakdown of the week">
+              <div>
+                <div class="choice-title">Economics Breakdown of the week</div>
+                <div class="choice-sub">Short, clear summaries of the most important economics topics.</div>
+              </div>
+              <span class="radio" aria-hidden="true"></span>
+            </div>
+
+            <div class="choice" data-target="market" tabindex="0" role="button" aria-label="Choose Market Breakdown of the week">
+              <div>
+                <div class="choice-title">Market Breakdown of the week</div>
+                <div class="choice-sub">What moved the markets and why — explained simply.</div>
+              </div>
+              <span class="radio" aria-hidden="true"></span>
+            </div>
+
+            <div class="choice" data-target="deal" tabindex="0" role="button" aria-label="Choose Deal of the week">
+              <div>
+                <div class="choice-title">Deal of the week</div>
+                <div class="choice-sub">One standout deal and the key takeaways.</div>
+              </div>
+              <span class="radio" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <div class="submitRow">
+            <button id="submitBtn" type="submit">Subscribe</button>
+            <a class="linkbtn ghost" href="/index.html">Back to Mentura</a>
+          </div>
+
+          <div id="successMsg" class="success">✅ Sent — check your email.</div>
+
+          <div class="note">
+            Questions? Email us at <a href="mailto:menturacontact@gmail.com" style="color:#fff; text-decoration:underline; text-underline-offset:3px;">menturacontact@gmail.com</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("newsletter-form");
+    const choices = Array.from(document.querySelectorAll(".choice"));
+    const submitBtn = document.getElementById("submitBtn");
+    const successMsg = document.getElementById("successMsg");
+
+    function setActive(targetId) {
+      choices.forEach(c => c.classList.toggle("active", c.dataset.target === targetId));
+      const input = document.getElementById(targetId);
+      if (input) input.checked = true;
+    }
+
+    choices.forEach(choice => {
+      const pick = () => setActive(choice.dataset.target);
+      choice.addEventListener("click", pick);
+      choice.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); }
+      });
+    });
+
+    // If redirected back with ?sent=1
+    if (new URLSearchParams(window.location.search).get("sent") === "1") {
+      successMsg.style.display = "block";
+    }
+
+    // Small UX: disable button on submit
+    form.addEventListener("submit", () => {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending…";
+    });
+  </script>
+</body>
+</html>
