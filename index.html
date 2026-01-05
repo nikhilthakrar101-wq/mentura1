@@ -157,6 +157,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 28px;
+      align-items: stretch; /* ✅ ensures grid items stretch equally */
     }
 
     .card {
@@ -166,11 +167,26 @@
       border: 1px solid rgba(255,255,255,0.06);
       box-shadow: 0 14px 32px rgba(0,0,0,0.45);
       transition: transform 0.25s;
+
+      /* ✅ NEW: forces equal-height cards + button aligned bottom */
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
     .card:hover { transform: translateY(-5px); }
 
     .card h3 { font-size: 22px; margin-bottom: 12px; }
-    .card p { font-size: 16px; color: var(--accent-muted); margin-bottom: 20px; line-height: 1.5; }
+
+    .card p {
+      font-size: 16px;
+      color: var(--accent-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    /* ✅ NEW: pushes CTA to bottom of card */
+    .card-cta { margin-top: auto; }
+
     .card a { color: #fff; text-decoration: underline; font-weight: 500; }
 
     .how-it-works {
@@ -405,7 +421,7 @@
   </div>
 
   <div class="card">
-    <h3>Intern Insights</h3>
+    <h3>Intern Insights - Speak to an Intern</h3>
     <p>Coming soon. Speak to interns from leading companies and learn how they did it. Learn how they did it via a 1-2-1 call.</p>
     <div class="card-cta">
       <a href="interns.html">Learn More →</a>
